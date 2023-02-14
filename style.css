@@ -1,8 +1,33 @@
+body {
+   display: flex;
+   flex-direction: column;
+   font-size: 3rem;
+}
+
+* {
+   padding: 0;
+   margin: 0;
+   box-sizing: border-box;
+}
+
+#header {
+   background-color: blue;
+   color: #ffffff;
+   height: 10vh;
+}
+
+#game-container {
+   height: 90vh;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
 #board {
    margin: auto;
    background-color: cadetblue;
-   height: 300px;
-   width: 300px;
+   height: 50vh;
+   aspect-ratio: 1;
    display: grid;
    grid-template-columns: repeat(3, 1fr);
    grid-template-rows: repeat(3, 1fr);
@@ -11,8 +36,14 @@
    gap: 3%;
 }
 
+.player-info {
+   flex: 1;
+   text-align: center;
+}
+
 .square {
    background-color: red;
-   text-align: center;
-   align-self: stretch;
+   display: flex;
+   align-items: center;
+   justify-content: center;
 }

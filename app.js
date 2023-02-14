@@ -1,5 +1,5 @@
 // game board module
-let gameBoard = (function () {
+const GameBoard = (function () {
    const state = [];
    state.length = 9;
 
@@ -14,37 +14,38 @@ let gameBoard = (function () {
 // display controller
 const displayController = (function () {
    const board = document.getElementById('board');
-   for (let i = 0; i < gameBoard.state.length; i++) {
+   for (let i = 0; i < GameBoard.state.length; i++) {
       const square = document.createElement('div');
       square.classList.add('square');
       square.dataset.index = i;
-      square.innerText = gameBoard.state[i];
+      // square.innerText = GameBoard.state[i];
       board.appendChild(square);
    }
 
-   function getMoveInfo(e) {
-      const targetSquare = e.target.dataset.index;
-      gameBoard.updateGameState(targetSquare);
-      e.target.innerText = gameBoard.state[targetSquare];
+   function handleSquareClick(event) {
+      if (!event.target.classList.contains('square')) return;
+      const targetIndex = event.target.dataset.index;
+      GameBoard.updateGameState(targetIndex);
+      event.target.innerText = GameBoard.state[targetIndex];
       gameEngin.alternateTurn();
-      console.log(players, gameBoard);
+      console.log(players, GameBoard);
    }
 
-   board.addEventListener('click', getMoveInfo);
+   board.addEventListener('click', handleSquareClick);
 
    // function updateDisplay(e) {
-   //    e.target.innerText = gameBoard.state[targetSquare];
+   //    e.target.innerText = GameBoard.state[square];
    // }
 })();
 
 // player factory
-const playerFactory = (name, symbol, turn) => {
-   const play = () => gameBoard.updateGameBoard(symbol);
+const createPlayer = (name, symbol, turn) => {
+   const play = () => GameBoard.updateGameBoard(symbol);
    return { name, symbol, turn, play };
 };
 
-const player01 = playerFactory('amine', 'x', true);
-const player02 = playerFactory('bot', 'o', false);
+const player01 = createPlayer('amine', 'x', true);
+const player02 = createPlayer('bot', 'o', false);
 
 const players = [player01, player02];
 
