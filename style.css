@@ -6,6 +6,13 @@
    display: grid;
    grid-template-columns: repeat(3, 1fr);
    grid-template-rows: repeat(3, 1fr);
-   align-items: center;
-   justify-items: center;
+   align-content: center;
+   justify-content: center;
+   gap: 3%;
+}
+
+.square {
+   background-color: red;
+   text-align: center;
+   align-self: stretch;
 }
