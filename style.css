@@ -1,0 +1,11 @@
+#board {
+   margin: auto;
+   background-color: cadetblue;
+   height: 300px;
+   width: 300px;
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   grid-template-rows: repeat(3, 1fr);
+   align-items: center;
+   justify-items: center;
+}
