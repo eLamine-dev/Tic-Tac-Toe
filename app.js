@@ -1,7 +1,6 @@
 // game board module
 const GameBoard = (function () {
-   const state = [];
-   state.length = 9;
+   const state = new Array(9);
 
    function updateGameState(index) {
       let player = players.find((player) => player.turn === true);
@@ -62,3 +61,7 @@ let gameEngin = (function () {
 
    return { alternateTurn };
 })();
+
+const gameSettings = document.getElementById('game-settings');
+
+gameSettings.showModal();

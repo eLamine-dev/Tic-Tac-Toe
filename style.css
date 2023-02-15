@@ -47,3 +47,80 @@ body {
    align-items: center;
    justify-content: center;
 }
+
+#game-settings {
+   height: 450px;
+   width: 380px;
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   background-color: rgb(84, 54, 193);
+   border: none;
+   border-radius: 1rem;
+   overflow: hidden;
+}
+
+#game-settings-modal[open] {
+   animation: fade-in 1s forwards;
+}
+
+@keyframes fade-in {
+   0% {
+      opacity: 0;
+      transform: translate(-50%, -20%);
+   }
+   100% {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+   }
+}
+
+#game-settings::backdrop {
+   background: rgba(0, 0, 0, 0.3);
+   backdrop-filter: blur(0.2rem);
+}
+
+#settings-form {
+   height: 100%;
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.radio {
+   float: left;
+   margin: 0 5px 0 0;
+   width: 100px;
+   height: 40px;
+   position: relative;
+   font-size: 1rem;
+}
+
+/* .radio label,
+.radio input {
+   display: block;
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+} */
+
+.radio input[type='radio'] {
+   opacity: 0.011;
+   z-index: 100;
+}
+
+.radio input[type='radio']:checked + label {
+   background: #20b8be;
+   border-radius: 4px;
+}
+
+.radio label {
+   cursor: pointer;
+   z-index: 90;
+   line-height: 1.8em;
+}
