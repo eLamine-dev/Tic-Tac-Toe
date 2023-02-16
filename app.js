@@ -68,16 +68,17 @@ gameSettings.showModal();
 
 const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
 const gameLevel = document.getElementById('game-level');
-const playe02Name = document.querySelector('input[name="player02-name"]');
+const player02Name = document.getElementById('player-two');
 
 gameModeBtns.forEach((btn) => {
    btn.addEventListener('change', (event) => {
       const mode = event.target.value;
       if (mode === 'PvP') {
-         gameLevel.style.visibility = 'hidden';
+         gameLevel.style.display = 'none';
+         player02Name.style.display = 'block';
       } else if (mode === 'PvE') {
-         gameLevel.style.visibility = 'visible';
-         playe02Name.value = 'Computer';
+         gameLevel.style.display = 'block';
+         player02Name.style.display = 'none';
       }
    });
 });

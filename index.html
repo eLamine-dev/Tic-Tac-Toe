@@ -32,7 +32,7 @@
          <form id="settings-form">
             <header>Game settings</header>
             <fieldset id="game-mode">
-               <div class="radio">
+               <div>
                   <input
                      type="radio"
                      name="game-mode"
@@ -43,7 +43,7 @@
                   />
                   <label for="PvP">PvP</label>
                </div>
-               <div class="radio">
+               <div>
                   <input
                      type="radio"
                      name="game-mode"
@@ -54,46 +54,57 @@
                   <label for="PvE">PvE</label>
                </div>
             </fieldset>
-            <fieldset id="player-one">
-               <input type="text" name="player01-name" placeholder="P01-Name" />
-               <button disabled>X</button>
-            </fieldset>
-            <fieldset id="player-two">
-               <input type="text" name="player02-name" placeholder="P02-Name" />
-               <button disabled>o</button>
-            </fieldset>
-            <fieldset id="game-level">
-               <div class="radio">
+            <div id="form-body">
+               <fieldset id="player-one">
+                  <label for="player01-name">choose P01 name</label>
                   <input
-                     type="radio"
-                     name="game-level"
-                     id="easy"
-                     autocomplete="off"
-                     checked
+                     type="text"
+                     name="player01-name"
+                     placeholder="P01-Name"
                   />
-                  <label for="easy">EASY</label>
-               </div>
-               <div class="radio">
+               </fieldset>
+               <button class="symbol-choice" disabled>X</button>
+               <fieldset id="player-two">
+                  <label for="player0-name">choose P02 name</label>
                   <input
-                     type="radio"
-                     name="game-level"
-                     id="medium"
-                     autocomplete="off"
-                     checked
+                     type="text"
+                     name="player02-name"
+                     placeholder="P02-Name"
                   />
-                  <label for="medium">Medium</label>
-               </div>
-               <div class="radio">
-                  <input
-                     type="radio"
-                     name="game-level"
-                     id="hard"
-                     autocomplete="off"
-                     checked
-                  />
-                  <label for="hard">hard</label>
-               </div>
-            </fieldset>
+               </fieldset>
+               <fieldset id="game-level">
+                  <label for="game-level">choose AI difficultly</label>
+                  <div id="difficulty-div">
+                     <input
+                        type="radio"
+                        name="game-level"
+                        id="easy"
+                        autocomplete="off"
+                        checked
+                     />
+                     <label for="easy">EASY</label>
+
+                     <input
+                        type="radio"
+                        name="game-level"
+                        id="medium"
+                        autocomplete="off"
+                        checked
+                     />
+                     <label for="medium">MEDIUM</label>
+
+                     <input
+                        type="radio"
+                        name="game-level"
+                        id="hard"
+                        autocomplete="off"
+                        checked
+                     />
+                     <label for="hard">HARD</label>
+                  </div>
+               </fieldset>
+               <button class="symbol-choice" disabled>o</button>
+            </div>
             <footer>
                <button type="submit">Star Game</button>
             </footer>
