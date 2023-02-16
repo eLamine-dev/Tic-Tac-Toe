@@ -37,6 +37,7 @@
                      type="radio"
                      name="game-mode"
                      id="PvP"
+                     value="PvP"
                      autocomplete="off"
                      checked
                   />
@@ -47,6 +48,7 @@
                      type="radio"
                      name="game-mode"
                      id="PvE"
+                     value="PvE"
                      autocomplete="off"
                   />
                   <label for="PvE">PvE</label>
@@ -54,11 +56,11 @@
             </fieldset>
             <fieldset id="player-one">
                <input type="text" name="player01-name" placeholder="P01-Name" />
-               <button disabled="disabled">X</button>
+               <button disabled>X</button>
             </fieldset>
             <fieldset id="player-two">
-               <input type="text" name="player01-name" placeholder="P02-Name" />
-               <button disabled="disabled">o</button>
+               <input type="text" name="player02-name" placeholder="P02-Name" />
+               <button disabled>o</button>
             </fieldset>
             <fieldset id="game-level">
                <div class="radio">
@@ -93,7 +95,7 @@
                </div>
             </fieldset>
             <footer>
-               <button>Star Game</button>
+               <button type="submit">Star Game</button>
             </footer>
          </form>
       </dialog>
