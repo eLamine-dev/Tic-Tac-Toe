@@ -10,7 +10,7 @@ const pubsub = (() => {
       }
 
       events[event].forEach((subscription) => {
-         subscription.func(event, data);
+         subscription.func(data);
       });
       return true;
    }
@@ -56,7 +56,7 @@ const GameBoard = (function () {
 
    pubsub.subscribe('cellClicked', updateGameState);
 
-   function updateGameState(event, index) {
+   function updateGameState(index) {
       let player = players.find((player) => player.turn === true);
       state[index] = player.symbol;
       pubsub.publish('stateUpdated', [state, index]);
@@ -70,7 +70,7 @@ const displayController = (function () {
    const board = document.getElementById('board');
    pubsub.subscribe('stateUpdated', updateCell);
 
-   function updateCell(event, [state, index]) {
+   function updateCell([state, index]) {
       const cell = document.querySelector(`[data-index="${index}"]`);
       cell.innerText = state[index];
    }
@@ -107,7 +107,18 @@ let gameEngin = (function () {
       [2, 4, 6],
    ];
 
-   const stateSubscription = pubsub.subscribe('stateUpdated', checkForDraw);
+   const stateSubscription = pubsub.subscribe('stateUpdated', checkForEnd);
+
+   function checkForEnd([state, index]) {
+      const currentPlayer = players.find((player) => player.turn === true);
+      if (isWinningMove([state, index], currentPlayer)) {
+         pubsub.publish('winner', currentPlayer);
+      } else if (isDrawEnd(state)) {
+         pubsub.publish('draw');
+      } else {
+         alternateTurn();
+      }
+   }
 
    function alternateTurn() {
       players.forEach((player) => {
@@ -115,26 +126,19 @@ let gameEngin = (function () {
       });
    }
 
-   function checkForWinningMove(event, [state, index]) {
-      const currentPlayer = players.find((player) => player.turn === true);
+   function isWinningMove([state, index], currentPlayer) {
       const possibleWins = WINNING_COMBINATIONS.filter((combination) =>
          combination.includes(Number(index))
       );
 
-      if (
-         possibleWins.some((combination) =>
-            combination.every((i) => state[i] === currentPlayer.symbol)
-         )
-      ) {
-         console.log(`winner: ${currentPlayer.name}`);
-      }
+      return possibleWins.some((combination) =>
+         combination.every((i) => state[i] === currentPlayer.symbol)
+      );
    }
 
-   function checkForDraw(event, [state, index]) {
+   function isDrawEnd(state) {
       if (Object.values(state).length === state.length) {
          console.log('draw');
-      } else {
-         alternateTurn();
       }
    }
 })();
