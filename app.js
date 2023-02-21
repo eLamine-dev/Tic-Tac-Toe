@@ -1,10 +1,66 @@
+// pubsub module
+
+const pubsub = (() => {
+   const events = {};
+   let subscribersId = -1;
+
+   function publish(event, data) {
+      if (!events[event]) {
+         return false;
+      }
+
+      const subscribers = events[event];
+      subscribers.forEach((subscriber) => {
+         subscriber.func(event, data);
+      });
+      return true;
+   }
+
+   function subscribe(event, func) {
+      if (!events[event]) {
+         events[event] = [];
+      }
+
+      subscribersId += 1;
+      const token = subscribersId.toString();
+      events[event].push({
+         token,
+         func,
+      });
+      return token;
+   }
+
+   function unsubscribe(token) {
+      const found = Object.keys(events).some((event) =>
+         events[event].some((subscriber, index) => {
+            const areEqual = subscriber.token === token.toString();
+            if (areEqual) {
+               events[event].splice(index, 1);
+            }
+            return areEqual;
+         })
+      );
+
+      return found ? token : null;
+   }
+
+   return {
+      publish,
+      subscribe,
+      unsubscribe,
+   };
+})();
+
 // game board module
 const GameBoard = (function () {
    const state = new Array(9);
 
-   function updateGameState(index) {
+   pubsub.subscribe('movePlayed', updateGameState);
+
+   function updateGameState(event, index) {
       let player = players.find((player) => player.turn === true);
       state[index] = player.symbol;
+      console.log(state);
    }
 
    return { state, updateGameState };
@@ -14,26 +70,30 @@ const GameBoard = (function () {
 const displayController = (function () {
    const board = document.getElementById('board');
    for (let i = 0; i < GameBoard.state.length; i++) {
-      const square = document.createElement('div');
-      square.classList.add('square');
-      square.dataset.index = i;
-      // square.innerText = GameBoard.state[i];
-      board.appendChild(square);
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.index = i;
+      // cell.innerText = GameBoard.state[i];
+      board.appendChild(cell);
    }
 
-   function handleSquareClick(event) {
-      if (!event.target.classList.contains('square')) return;
+   // function handleSquareClick(event) {
+   //    const targetIndex = event.target.dataset.index;
+   //    GameBoard.updateGameState(targetIndex);
+   //    event.target.innerText = GameBoard.state[targetIndex];
+   //    gameEngin.alternateTurn();
+   //    console.log(players, GameBoard);
+   // }
+
+   board.addEventListener('click', (event) => {
+      if (!event.target.classList.contains('cell')) return;
       const targetIndex = event.target.dataset.index;
-      GameBoard.updateGameState(targetIndex);
-      event.target.innerText = GameBoard.state[targetIndex];
-      gameEngin.alternateTurn();
-      console.log(players, GameBoard);
-   }
-
-   board.addEventListener('click', handleSquareClick);
+      pubsub.publish('movePlayed', targetIndex);
+      console.log(targetIndex);
+   });
 
    // function updateDisplay(e) {
-   //    e.target.innerText = GameBoard.state[square];
+   //    e.target.innerText = GameBoard.state[cell];
    // }
 })();
 
@@ -62,7 +122,7 @@ let gameEngin = (function () {
    return { alternateTurn };
 })();
 
-const gameSettings = document.getElementById('game-settings');
+const gameSettings = document.getElementById('settings-modal');
 
 gameSettings.showModal();
 
