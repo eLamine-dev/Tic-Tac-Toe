@@ -57,9 +57,9 @@ const GameBoard = (function () {
    pubsub.subscribe('cellClicked', updateGameState);
 
    function updateGameState(index) {
-      let player = players.find((player) => player.turn === true);
-      state[index] = player.symbol;
-      pubsub.publish('stateUpdated', [state, index]);
+      let currentPlayer = players.find((player) => player.turn === true);
+      state[index] = currentPlayer.symbol;
+      pubsub.publish('stateUpdated', [state, index, currentPlayer]);
    }
 
    return { state };
@@ -109,12 +109,13 @@ let gameEngin = (function () {
 
    const stateSubscription = pubsub.subscribe('stateUpdated', checkForEnd);
 
-   function checkForEnd([state, index]) {
-      const currentPlayer = players.find((player) => player.turn === true);
-      if (isWinningMove([state, index], currentPlayer)) {
+   function checkForEnd([state, index, currentPlayer]) {
+      if (isWinningMove(state, index, currentPlayer)) {
          pubsub.publish('winner', currentPlayer);
+         console.log(currentPlayer.name);
       } else if (isDrawEnd(state)) {
          pubsub.publish('draw');
+         console.log('draw');
       } else {
          alternateTurn();
       }
@@ -126,7 +127,7 @@ let gameEngin = (function () {
       });
    }
 
-   function isWinningMove([state, index], currentPlayer) {
+   function isWinningMove(state, index, currentPlayer) {
       const possibleWins = WINNING_COMBINATIONS.filter((combination) =>
          combination.includes(Number(index))
       );
@@ -137,9 +138,7 @@ let gameEngin = (function () {
    }
 
    function isDrawEnd(state) {
-      if (Object.values(state).length === state.length) {
-         console.log('draw');
-      }
+      return Object.values(state).length === state.length;
    }
 })();
 
