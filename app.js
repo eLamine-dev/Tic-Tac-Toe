@@ -2,16 +2,15 @@
 
 const pubsub = (() => {
    const events = {};
-   let subscribersId = -1;
+   let subscriptionsId = -1;
 
    function publish(event, data) {
       if (!events[event]) {
          return false;
       }
 
-      const subscribers = events[event];
-      subscribers.forEach((subscriber) => {
-         subscriber.func(event, data);
+      events[event].forEach((subscription) => {
+         subscription.func(event, data);
       });
       return true;
    }
@@ -21,8 +20,8 @@ const pubsub = (() => {
          events[event] = [];
       }
 
-      subscribersId += 1;
-      const token = subscribersId.toString();
+      subscriptionsId += 1;
+      const token = subscriptionsId.toString();
       events[event].push({
          token,
          func,
@@ -32,8 +31,8 @@ const pubsub = (() => {
 
    function unsubscribe(token) {
       const found = Object.keys(events).some((event) =>
-         events[event].some((subscriber, index) => {
-            const areEqual = subscriber.token === token.toString();
+         events[event].some((subscription, index) => {
+            const areEqual = subscription.token === token.toString();
             if (areEqual) {
                events[event].splice(index, 1);
             }
@@ -55,46 +54,33 @@ const pubsub = (() => {
 const GameBoard = (function () {
    const state = new Array(9);
 
-   pubsub.subscribe('movePlayed', updateGameState);
+   pubsub.subscribe('cellClicked', updateGameState);
 
    function updateGameState(event, index) {
       let player = players.find((player) => player.turn === true);
       state[index] = player.symbol;
-      console.log(state);
+      pubsub.publish('stateUpdated', [state, index]);
+      console.log(state, index);
    }
 
-   return { state, updateGameState };
+   // return { state, updateGameState };
 })();
 
 // display controller
 const displayController = (function () {
    const board = document.getElementById('board');
-   for (let i = 0; i < GameBoard.state.length; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      cell.dataset.index = i;
-      // cell.innerText = GameBoard.state[i];
-      board.appendChild(cell);
-   }
+   pubsub.subscribe('stateUpdated', updateCell);
 
-   // function handleSquareClick(event) {
-   //    const targetIndex = event.target.dataset.index;
-   //    GameBoard.updateGameState(targetIndex);
-   //    event.target.innerText = GameBoard.state[targetIndex];
-   //    gameEngin.alternateTurn();
-   //    console.log(players, GameBoard);
-   // }
+   function updateCell(event, [state, index]) {
+      const cell = document.querySelector(`[data-index="${index}"]`);
+      cell.innerText = state[index];
+   }
 
    board.addEventListener('click', (event) => {
       if (!event.target.classList.contains('cell')) return;
       const targetIndex = event.target.dataset.index;
-      pubsub.publish('movePlayed', targetIndex);
-      console.log(targetIndex);
+      pubsub.publish('cellClicked', targetIndex);
    });
-
-   // function updateDisplay(e) {
-   //    e.target.innerText = GameBoard.state[cell];
-   // }
 })();
 
 // player factory
@@ -111,15 +97,30 @@ const players = [player01, player02];
 // game logic
 
 let gameEngin = (function () {
+   const WINNING_COMBINATIONS = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [1, 4, 7],
+      [2, 5, 8],
+      [3, 6, 9],
+      [1, 5, 9],
+      [3, 5, 7],
+   ];
+
+   const stateSubscription = pubsub.subscribe(
+      'stateUpdated',
+      checkForWinningMove
+   );
    function alternateTurn() {
       players.forEach((player) => {
          player.turn = !player.turn;
       });
    }
 
-   function checkForWinningMove() {}
-
-   return { alternateTurn };
+   function checkForWinningMove(event, state, index) {
+      alternateTurn();
+   }
 })();
 
 const gameSettings = document.getElementById('settings-modal');
