@@ -1,4 +1,4 @@
-// pubsub module
+// pubsub module ==========================================================================
 
 const pubsub = (() => {
    const events = {};
@@ -50,42 +50,10 @@ const pubsub = (() => {
    };
 })();
 
-// game board module
-const GameBoard = (function () {
-   const state = new Array(9);
-
-   pubsub.subscribe('cellClicked', updateGameState);
-
-   function updateGameState(index) {
-      let currentPlayer = players.find((player) => player.turn === true);
-      state[index] = currentPlayer.symbol;
-      pubsub.publish('stateUpdated', [state, index, currentPlayer]);
-   }
-
-   return { state };
-})();
-
-// display controller
-const displayController = (function () {
-   const board = document.getElementById('board');
-   pubsub.subscribe('stateUpdated', updateCell);
-
-   function updateCell([state, index]) {
-      const cell = document.querySelector(`[data-index="${index}"]`);
-      cell.innerText = state[index];
-   }
-
-   board.addEventListener('click', (event) => {
-      if (!event.target.classList.contains('cell')) return;
-      const targetIndex = event.target.dataset.index;
-      pubsub.publish('cellClicked', targetIndex);
-   });
-})();
-
-// player factory
+// player factory =================================================================================================
 const createPlayer = (name, symbol, turn) => {
    const play = () => GameBoard.updateGameBoard(symbol);
-   return { name, symbol, turn, play };
+   return { name, symbol, turn };
 };
 
 const player01 = createPlayer('amine', 'x', true);
@@ -93,7 +61,7 @@ const player02 = createPlayer('bot', 'o', false);
 
 const players = [player01, player02];
 
-// game logic
+// game logic  ====================================================================================================
 
 let gameEngin = (function () {
    const WINNING_COMBINATIONS = [
@@ -107,9 +75,16 @@ let gameEngin = (function () {
       [2, 4, 6],
    ];
 
-   const stateSubscription = pubsub.subscribe('stateUpdated', checkForEnd);
+   let currentPlayer = player01;
 
-   function checkForEnd([state, index, currentPlayer]) {
+   pubsub.subscribe('stateUpdated', checkForEnd);
+   pubsub.subscribe('cellClicked', publishCurrentPlayer);
+
+   function publishCurrentPlayer() {
+      pubsub.publish('currentPlayer', currentPlayer);
+   }
+
+   function checkForEnd([state, index]) {
       if (isWinningMove(state, index, currentPlayer)) {
          pubsub.publish('winner', currentPlayer);
          console.log(currentPlayer.name);
@@ -122,9 +97,15 @@ let gameEngin = (function () {
    }
 
    function alternateTurn() {
-      players.forEach((player) => {
-         player.turn = !player.turn;
-      });
+      currentPlayer = players.find((player) => player !== currentPlayer);
+
+      // players.forEach((player) => {
+      //    player.turn = !player.turn;
+      // });
+   }
+
+   function getCurrentPlayer() {
+      return currentPlayer;
    }
 
    function isWinningMove(state, index, currentPlayer) {
@@ -140,12 +121,54 @@ let gameEngin = (function () {
    function isDrawEnd(state) {
       return Object.values(state).length === state.length;
    }
+
+   return { getCurrentPlayer };
 })();
+
+// game board module ========================================================================================
+const GameBoard = (function () {
+   const state = new Array(9);
+
+   pubsub.subscribe('cellClicked', updateGameState);
+
+   function updateGameState(index) {
+      let currentPlayer = gameEngin.getCurrentPlayer();
+      state[index] = currentPlayer.symbol;
+      pubsub.publish('stateUpdated', [state, index]);
+      console.log(state);
+   }
+})();
+
+// display controller ==========================================================================================
+const displayController = (function () {
+   const board = document.getElementById('board');
+   pubsub.subscribe('stateUpdated', updateCell);
+
+   function updateCell([state, index]) {
+      const cell = document.querySelector(`[data-index="${index}"]`);
+      cell.classList.add(state[index]);
+      setBoardHoverClass();
+   }
+
+   board.addEventListener('click', (event) => {
+      if (!event.target.classList.contains('cell')) return;
+      const targetIndex = event.target.dataset.index;
+      pubsub.publish('cellClicked', targetIndex);
+   });
+
+   function setBoardHoverClass() {
+      const currentPlayer = gameEngin.getCurrentPlayer();
+      board.classList.remove('x');
+      board.classList.remove('o');
+      board.classList.add(currentPlayer.symbol);
+   }
+})();
+
+// =================================================================================================
 
 const gameSettings = document.getElementById('settings-modal');
 
 gameSettings.showModal();
-
 const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
 const gameLevel = document.getElementById('game-level');
 const player02Name = document.getElementById('player-two');

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+
 body {
    display: flex;
    flex-direction: column;
@@ -31,8 +33,6 @@ body {
    display: grid;
    grid-template-columns: repeat(3, 1fr);
    grid-template-rows: repeat(3, 1fr);
-   align-content: center;
-   justify-content: center;
    gap: 3%;
 }
 
@@ -42,10 +42,71 @@ body {
 }
 
 .cell {
-   background-color: red;
+   background-color: white;
    display: flex;
    align-items: center;
    justify-content: center;
+   position: relative;
+   cursor: pointer;
+}
+
+.cell.x,
+.cell.o {
+   cursor: not-allowed;
+}
+
+.cell.x::before,
+.cell.x::after,
+.cell.o::before {
+   background-color: black;
+}
+
+.board.x .cell:not(.x):not(.o):hover::before,
+.board.x .cell:not(.x):not(.o):hover::after,
+.board.o .cell:not(.x):not(.o):hover::before {
+   background-color: rgb(29, 26, 179);
+}
+
+.cell.x::before,
+.cell.x::after,
+.board.x .cell:not(.x):not(.o):hover::before,
+.board.x .cell:not(.x):not(.o):hover::after {
+   content: '';
+   position: absolute;
+   width: calc(90% * 0.15);
+   height: 90%;
+}
+
+.cell.x::before,
+.board.x .cell:not(.x):not(.o):hover::before {
+   transform: rotate(45deg);
+}
+
+.cell.x::after,
+.board.x .cell:not(.x):not(.o):hover::after {
+   transform: rotate(-45deg);
+}
+
+.cell.o::before,
+.cell.o::after,
+.board.o .cell:not(.x):not(.o):hover::before,
+.board.o .cell:not(.x):not(.o):hover::after {
+   content: '';
+   position: absolute;
+   border-radius: 50%;
+}
+
+.cell.o::before,
+.board.o .cell:not(.x):not(.o):hover::before {
+   width: 80%;
+   height: 80%;
+}
+
+.cell.o::after,
+.board.o .cell:not(.x):not(.o):hover::after {
+   width: calc(80% * 0.7);
+   height: calc(80% * 0.7);
+   background-color: white;
 }
 
 #settings-modal {
