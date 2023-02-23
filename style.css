@@ -16,13 +16,13 @@ body {
 }
 
 #header {
-   color: #ffffff;
+   color: white;
    font-size: 3rem;
    font-weight: 700;
 }
 
 #game-container {
-   height: max(95vh, 600px);
+   height: 850px;
    width: min(460px, 100vw);
    display: flex;
    flex-direction: column;
@@ -30,12 +30,13 @@ body {
    align-content: center;
    align-items: center;
 
-   background-color: #1e90ff;
+   background-color: #044f91;
    border-radius: 10px;
+   border: #000000 2px solid;
 }
 
 #board {
-   background-color: rgb(60, 25, 216);
+   background-color: #044f91;
    height: min(430px, 100vw);
    width: min(430px, 100vw);
    display: grid;
@@ -45,35 +46,47 @@ body {
 }
 
 .player-info {
-   display: flex;
+   display: grid;
    font-size: 1rem;
+   grid-template-columns: 50px 1fr;
+   grid-template-rows: 1fr 1fr;
+   width: 50%;
+   align-items: center;
+   background-color: #5cd7f2;
+   gap: 10px;
+   padding: 5px;
+   border-radius: 5px;
+   border: #000000 2px solid;
 }
 
 .players-info {
+   width: 95%;
    display: flex;
-   justify-content: space-around;
-   width: 100%;
+   gap: 20px;
 }
 
 .player-symbol {
    height: 50px;
-   width: 50px;
-   background-color: burlywood;
+   width: 100%;
+   background-color: #4bc3f2;
    justify-self: end;
    display: flex;
    justify-content: center;
    align-items: center;
    border-radius: 5px;
    position: relative;
+   grid-row: 1 / 3;
+   border: #000000 2px solid;
 }
 
 .cell {
-   background-color: white;
+   background-color: #7db8c5;
    display: flex;
    align-items: center;
    justify-content: center;
    position: relative;
    cursor: pointer;
+   border: #000000 2px solid;
 }
 
 .cell.x,
@@ -83,14 +96,17 @@ body {
 
 .cell.x::before,
 .cell.x::after,
-.cell.o::before,
 .symbol-choice.x::before,
 .symbol-choice.x::after,
 .player-symbol.x::before,
-.player-symbol.x::after,
+.player-symbol.x::after {
+   background-color: #ec2e2e;
+}
+
+.cell.o::before,
 .symbol-choice.o::before,
 .player-symbol.o::before {
-   background-color: black;
+   background-color: #035196;
 }
 
 .board.x .cell:not(.x):not(.o):hover::before,
@@ -159,9 +175,9 @@ body {
 
 #settings-modal {
    height: 450px;
-   width: 450px;
+   width: min(430px, 100vw);
    position: fixed;
-   top: 50%;
+   top: 55%;
    left: 50%;
    transform: translate(-50%, -50%);
    background-color: rgb(84, 54, 193);
@@ -170,7 +186,7 @@ body {
    overflow: hidden;
 }
 
-/* #game-settings-modal[open] {
+#settings-modal[open] {
    animation: fade-in 1s forwards;
 }
 
@@ -185,10 +201,10 @@ body {
    }
 }
 
-#game-settings::backdrop {
+#settings-modal::backdrop {
    background: rgba(0, 0, 0, 0.3);
    backdrop-filter: blur(0.2rem);
-} */
+}
 
 #settings-form {
    height: 100%;
@@ -286,6 +302,12 @@ body {
    transition: 0.3s;
 }
 
+.bottom-buttons {
+   width: 100%;
+   display: flex;
+   justify-content: space-around;
+}
+
 button {
    font-size: 1.4rem;
    border-radius: 4px;
@@ -293,4 +315,5 @@ button {
    height: 50px;
    min-width: 140px;
    padding: 10px;
+   border: #000000 2px solid;
 }

@@ -18,13 +18,13 @@
          <header id="header">Tic-Tac-Toe</header>
          <div class="players-info">
             <div class="player-info">
-               <h1>PLAYER-01</h1>
                <div class="player-symbol x"></div>
+               <h1>PLAYER-01</h1>
                <h6>name</h6>
             </div>
             <div class="player-info">
-               <h1>PLAYER-02</h1>
                <div class="player-symbol o"></div>
+               <h1>PLAYER-02</h1>
                <h6>name</h6>
             </div>
          </div>
@@ -40,93 +40,95 @@
             <div class="cell" data-index="7"></div>
             <div class="cell" data-index="8"></div>
          </div>
-         <footer>
+         <footer class="bottom-buttons">
             <button>Reset</button>
             <button>Settings</button>
          </footer>
-      </div>
 
-      <dialog id="settings-modal">
-         <form id="settings-form">
-            <header id="form-header">Game settings</header>
-            <fieldset id="game-mode">
-               <div>
-                  <input
-                     type="radio"
-                     name="game-mode"
-                     id="PvP"
-                     value="PvP"
-                     autocomplete="off"
-                     checked
-                  />
-                  <label for="PvP">PvP</label>
-               </div>
-               <div>
-                  <input
-                     type="radio"
-                     name="game-mode"
-                     id="PvE"
-                     value="PvE"
-                     autocomplete="off"
-                  />
-                  <label for="PvE">PvE</label>
-               </div>
-            </fieldset>
-            <div id="form-body">
-               <fieldset id="player-one">
-                  <label for="player01-name">choose P01 name</label>
-                  <input
-                     type="text"
-                     name="player01-name"
-                     placeholder="P01-Name"
-                  />
-               </fieldset>
-               <div class="symbol-choice x"></div>
-               <fieldset id="player-two">
-                  <label for="player0-name">choose P02 name</label>
-                  <input
-                     type="text"
-                     name="player02-name"
-                     placeholder="P02-Name"
-                  />
-               </fieldset>
-               <fieldset id="game-level">
-                  <label for="game-level">choose AI difficultly</label>
-                  <div id="difficulty-choices">
+         <dialog id="settings-modal">
+            <form id="settings-form">
+               <header id="form-header">Game settings</header>
+               <fieldset id="game-mode">
+                  <div>
                      <input
                         type="radio"
-                        name="game-level"
-                        id="easy"
+                        name="game-mode"
+                        id="PvP"
+                        value="PvP"
                         autocomplete="off"
                         checked
                      />
-                     <label for="easy">EASY</label>
-
+                     <label for="PvP">PvP</label>
+                  </div>
+                  <div>
                      <input
                         type="radio"
-                        name="game-level"
-                        id="medium"
+                        name="game-mode"
+                        id="PvE"
+                        value="PvE"
                         autocomplete="off"
-                        checked
                      />
-                     <label for="medium">MEDIUM</label>
-
-                     <input
-                        type="radio"
-                        name="game-level"
-                        id="hard"
-                        autocomplete="off"
-                        checked
-                     />
-                     <label for="hard">HARD</label>
+                     <label for="PvE">PvE</label>
                   </div>
                </fieldset>
-               <div class="symbol-choice o"></div>
-            </div>
-            <footer>
-               <button type="submit">Save Settings</button>
-            </footer>
-         </form>
-      </dialog>
+               <div id="form-body">
+                  <fieldset id="player-one">
+                     <label for="player01-name">choose P01 name</label>
+                     <input
+                        type="text"
+                        name="player01-name"
+                        placeholder="P01-Name"
+                        required
+                     />
+                  </fieldset>
+                  <div class="symbol-choice x"></div>
+                  <fieldset id="player-two">
+                     <label for="player0-name">choose P02 name</label>
+                     <input
+                        type="text"
+                        name="player02-name"
+                        placeholder="P02-Name"
+                        required
+                     />
+                  </fieldset>
+                  <fieldset id="game-level">
+                     <label for="game-level">choose AI difficultly</label>
+                     <div id="difficulty-choices">
+                        <input
+                           type="radio"
+                           name="game-level"
+                           id="easy"
+                           autocomplete="off"
+                           checked
+                        />
+                        <label for="easy">EASY</label>
+
+                        <input
+                           type="radio"
+                           name="game-level"
+                           id="medium"
+                           autocomplete="off"
+                           checked
+                        />
+                        <label for="medium">MEDIUM</label>
+
+                        <input
+                           type="radio"
+                           name="game-level"
+                           id="hard"
+                           autocomplete="off"
+                           checked
+                        />
+                        <label for="hard">HARD</label>
+                     </div>
+                  </fieldset>
+                  <div class="symbol-choice o"></div>
+               </div>
+               <footer>
+                  <button type="submit">Save Settings</button>
+               </footer>
+            </form>
+         </dialog>
+      </div>
    </body>
 </html>
