@@ -16,13 +16,17 @@ body {
 }
 
 #header {
-   color: white;
-   font-size: 3rem;
+   color: #dbeafe;
+   font-size: 3.5rem;
    font-weight: 700;
+   text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
+      2px 2px 0 #000;
+   letter-spacing: 0.3rem;
 }
 
 #game-container {
    height: 850px;
+   padding: 15px;
    width: min(460px, 100vw);
    display: flex;
    flex-direction: column;
@@ -30,15 +34,15 @@ body {
    align-content: center;
    align-items: center;
 
-   background-color: #044f91;
+   background-color: #0268c2;
    border-radius: 10px;
    border: #000000 2px solid;
 }
 
 #board {
-   background-color: #044f91;
-   height: min(430px, 100vw);
-   width: min(430px, 100vw);
+   background-color: #0268c2;
+   height: min(430px, 95vw);
+   width: min(430px, 95vw);
    display: grid;
    grid-template-columns: repeat(3, 1fr);
    grid-template-rows: repeat(3, 1fr);
@@ -47,12 +51,13 @@ body {
 
 .player-info {
    display: grid;
-   font-size: 1rem;
+   font-weight: 500;
+   font-size: 1.1rem;
    grid-template-columns: 50px 1fr;
    grid-template-rows: 1fr 1fr;
    width: 50%;
    align-items: center;
-   background-color: #5cd7f2;
+   background-color: #93c5fd;
    gap: 10px;
    padding: 5px;
    border-radius: 5px;
@@ -60,15 +65,15 @@ body {
 }
 
 .players-info {
-   width: 95%;
+   width: min(430px, 95vw);
    display: flex;
-   gap: 20px;
+   gap: 10px;
 }
 
 .player-symbol {
    height: 50px;
    width: 100%;
-   background-color: #4bc3f2;
+   background-color: #dbeafe;
    justify-self: end;
    display: flex;
    justify-content: center;
@@ -80,13 +85,14 @@ body {
 }
 
 .cell {
-   background-color: #7db8c5;
+   background-color: #dbeafe;
    display: flex;
    align-items: center;
    justify-content: center;
    position: relative;
    cursor: pointer;
    border: #000000 2px solid;
+   border-radius: 10px;
 }
 
 .cell.x,
@@ -100,19 +106,19 @@ body {
 .symbol-choice.x::after,
 .player-symbol.x::before,
 .player-symbol.x::after {
-   background-color: #ec2e2e;
+   background-color: #ec1919;
 }
 
 .cell.o::before,
 .symbol-choice.o::before,
 .player-symbol.o::before {
-   background-color: #035196;
+   background-color: #180bca;
 }
 
 .board.x .cell:not(.x):not(.o):hover::before,
 .board.x .cell:not(.x):not(.o):hover::after,
 .board.o .cell:not(.x):not(.o):hover::before {
-   background-color: rgb(29, 26, 179);
+   background-color: gray;
 }
 
 .cell.x::before,
@@ -226,6 +232,7 @@ body {
    align-self: center;
    transition: all 0.3s;
    outline: none;
+   text-transform: uppercase;
 }
 
 #game-level {
@@ -263,9 +270,7 @@ body {
 #difficulty-choices {
    display: flex;
    justify-content: space-between;
-
    /* background-color: #cecece; */
-
    /* height: 50px; */
    justify-content: space-between;
    gap: 5px;
@@ -316,4 +321,5 @@ button {
    min-width: 140px;
    padding: 10px;
    border: #000000 2px solid;
+   background-color: #bfdbfe;
 }
