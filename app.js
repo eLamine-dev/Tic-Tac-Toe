@@ -86,7 +86,6 @@ let gameEngin = (function () {
          console.log('draw');
       } else {
          alternateTurn();
-         pubsub.publish('currentPlayer', currentPlayer);
       }
    }
 
@@ -120,9 +119,9 @@ let gameEngin = (function () {
 const GameBoard = (function () {
    const state = new Array(9);
 
-   pubsub.subscribe('cellClicked', updateGameState);
+   pubsub.subscribe('cellClicked', updateBoardState);
 
-   function updateGameState(index) {
+   function updateBoardState(index) {
       const currentPlayer = gameEngin.getCurrentPlayer();
       if (!state[index]) {
          state[index] = currentPlayer.symbol;
@@ -136,19 +135,21 @@ const GameBoard = (function () {
 // display controller ==========================================================================================
 const displayController = (function () {
    const board = document.getElementById('board');
-   pubsub.subscribe('stateUpdated', updateCell);
 
-   function updateCell([state, index]) {
-      const cell = document.querySelector(`[data-index="${index}"]`);
-      cell.classList.add(state[index]);
-      const currentPlayer = gameEngin.getCurrentPlayer();
-      setBoardHoverClass(currentPlayer);
-   }
+   // pubsub.subscribe('stateUpdated', updateCell);
+
+   // function updateCell([state, index]) {
+   //    const cell = document.querySelector(`[data-index="${index}"]`);
+   //    cell.classList.add(state[index]);
+   //    setBoardHoverClass(gameEngin.getCurrentPlayer());
+   // }
 
    board.addEventListener('click', (event) => {
       if (!event.target.classList.contains('cell')) return;
-      const targetIndex = event.target.dataset.index;
-      pubsub.publish('cellClicked', targetIndex);
+      event.target.classList.add(gameEngin.getCurrentPlayer().symbol);
+      const cellIndex = event.target.dataset.index;
+      pubsub.publish('cellClicked', cellIndex);
+      setBoardHoverClass(gameEngin.getCurrentPlayer());
    });
 
    function setBoardHoverClass(player) {
@@ -159,7 +160,7 @@ const displayController = (function () {
    setBoardHoverClass(gameEngin.getCurrentPlayer());
 })();
 
-// =================================================================================================
+// ============================================================================================================
 
 const gameSettings = document.getElementById('settings-modal');
 gameSettings.showModal();
