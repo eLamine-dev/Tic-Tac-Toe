@@ -14,13 +14,21 @@
       <title>Tic-Tac-Toe</title>
    </head>
    <body>
-      <header id="header">Tic-Tac-Toe</header>
       <div id="game-container">
-         <div class="player-info">
-            <h1>P01</h1>
-            <h6>name</h6>
-            <h6>x</h6>
+         <header id="header">Tic-Tac-Toe</header>
+         <div class="players-info">
+            <div class="player-info">
+               <h1>P01</h1>
+               <div class="player-symbol x"></div>
+               <h6>name</h6>
+            </div>
+            <div class="player-info">
+               <h1>P02</h1>
+               <div class="player-symbol o"></div>
+               <h6>name</h6>
+            </div>
          </div>
+
          <div class="board" id="board">
             <div class="cell" data-index="0"></div>
             <div class="cell" data-index="1"></div>
@@ -32,11 +40,10 @@
             <div class="cell" data-index="7"></div>
             <div class="cell" data-index="8"></div>
          </div>
-         <div class="player-info">
-            <h1>P02</h1>
-            <h6>name</h6>
-            <h6>o</h6>
-         </div>
+         <footer>
+            <button>reset</button>
+            <button>settings</button>
+         </footer>
       </div>
       <dialog id="settings-modal">
          <form id="settings-form">
@@ -73,7 +80,7 @@
                      placeholder="P01-Name"
                   />
                </fieldset>
-               <div class="symbol-choice">X</div>
+               <div class="symbol-choice x"></div>
                <fieldset id="player-two">
                   <label for="player0-name">choose P02 name</label>
                   <input
@@ -84,7 +91,7 @@
                </fieldset>
                <fieldset id="game-level">
                   <label for="game-level">choose AI difficultly</label>
-                  <div id="difficulty-div">
+                  <div id="difficulty-choices">
                      <input
                         type="radio"
                         name="game-level"
@@ -113,7 +120,7 @@
                      <label for="hard">HARD</label>
                   </div>
                </fieldset>
-               <div class="symbol-choice">o</div>
+               <div class="symbol-choice o"></div>
             </div>
             <footer>
                <button type="submit">Star Game</button>

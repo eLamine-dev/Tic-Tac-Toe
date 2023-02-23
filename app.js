@@ -133,23 +133,22 @@ const GameBoard = (function () {
 })();
 
 // display controller ==========================================================================================
+
 const displayController = (function () {
    const board = document.getElementById('board');
 
-   // pubsub.subscribe('stateUpdated', updateCell);
+   pubsub.subscribe('stateUpdated', updateCell);
 
-   // function updateCell([state, index]) {
-   //    const cell = document.querySelector(`[data-index="${index}"]`);
-   //    cell.classList.add(state[index]);
-   //    setBoardHoverClass(gameEngin.getCurrentPlayer());
-   // }
+   function updateCell([state, index]) {
+      const cell = document.querySelector(`[data-index="${index}"]`);
+      cell.classList.add(state[index]);
+      setBoardHoverClass(gameEngin.getCurrentPlayer());
+   }
 
    board.addEventListener('click', (event) => {
       if (!event.target.classList.contains('cell')) return;
-      event.target.classList.add(gameEngin.getCurrentPlayer().symbol);
       const cellIndex = event.target.dataset.index;
       pubsub.publish('cellClicked', cellIndex);
-      setBoardHoverClass(gameEngin.getCurrentPlayer());
    });
 
    function setBoardHoverClass(player) {
@@ -158,25 +157,25 @@ const displayController = (function () {
       board.classList.add(player.symbol);
    }
    setBoardHoverClass(gameEngin.getCurrentPlayer());
+
+   const gameSettings = document.getElementById('settings-modal');
+
+   const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
+   const gameLevel = document.getElementById('game-level');
+   const player02Name = document.getElementById('player-two');
+   gameSettings.showModal();
+   gameModeBtns.forEach((btn) => {
+      btn.addEventListener('change', (event) => {
+         const mode = event.target.value;
+         if (mode === 'PvP') {
+            gameLevel.style.display = 'none';
+            player02Name.style.display = 'block';
+         } else if (mode === 'PvE') {
+            gameLevel.style.display = 'block';
+            player02Name.style.display = 'none';
+         }
+      });
+   });
 })();
 
 // ============================================================================================================
-
-const gameSettings = document.getElementById('settings-modal');
-gameSettings.showModal();
-const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
-const gameLevel = document.getElementById('game-level');
-const player02Name = document.getElementById('player-two');
-
-gameModeBtns.forEach((btn) => {
-   btn.addEventListener('change', (event) => {
-      const mode = event.target.value;
-      if (mode === 'PvP') {
-         gameLevel.style.display = 'none';
-         player02Name.style.display = 'block';
-      } else if (mode === 'PvE') {
-         gameLevel.style.display = 'block';
-         player02Name.style.display = 'none';
-      }
-   });
-});

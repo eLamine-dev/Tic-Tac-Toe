@@ -21,14 +21,17 @@ body {
 #game-container {
    height: 90vh;
    display: flex;
-   justify-content: space-between;
+   flex-direction: column;
+   justify-content: start;
    align-items: center;
+   margin: auto;
+   background-color: #1e90ff;
 }
 
 #board {
    margin: auto;
    background-color: cadetblue;
-   height: 50vh;
+   width: 100%;
    aspect-ratio: 1;
    display: grid;
    grid-template-columns: repeat(3, 1fr);
@@ -37,8 +40,23 @@ body {
 }
 
 .player-info {
-   flex: 1;
-   text-align: center;
+   display: flex;
+}
+
+.players-info {
+   display: flex;
+}
+
+.player-symbol {
+   height: 50px;
+   width: 50px;
+   background-color: burlywood;
+   justify-self: end;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   border-radius: 5px;
+   position: relative;
 }
 
 .cell {
@@ -57,7 +75,13 @@ body {
 
 .cell.x::before,
 .cell.x::after,
-.cell.o::before {
+.cell.o::before,
+.symbol-choice.x::before,
+.symbol-choice.x::after,
+.player-symbol.x::before,
+.player-symbol.x::after,
+.symbol-choice.o::before,
+.player-symbol.o::before {
    background-color: black;
 }
 
@@ -70,7 +94,11 @@ body {
 .cell.x::before,
 .cell.x::after,
 .board.x .cell:not(.x):not(.o):hover::before,
-.board.x .cell:not(.x):not(.o):hover::after {
+.board.x .cell:not(.x):not(.o):hover::after,
+.symbol-choice.x::before,
+.symbol-choice.x::after,
+.player-symbol.x::before,
+.player-symbol.x::after {
    content: '';
    position: absolute;
    width: calc(90% * 0.15);
@@ -78,35 +106,47 @@ body {
 }
 
 .cell.x::before,
-.board.x .cell:not(.x):not(.o):hover::before {
+.board.x .cell:not(.x):not(.o):hover::before,
+.symbol-choice.x::before,
+.player-symbol.x::before {
    transform: rotate(45deg);
 }
 
 .cell.x::after,
-.board.x .cell:not(.x):not(.o):hover::after {
+.board.x .cell:not(.x):not(.o):hover::after,
+.symbol-choice.x::after,
+.player-symbol.x::after {
    transform: rotate(-45deg);
 }
 
 .cell.o::before,
 .cell.o::after,
 .board.o .cell:not(.x):not(.o):hover::before,
-.board.o .cell:not(.x):not(.o):hover::after {
+.board.o .cell:not(.x):not(.o):hover::after,
+.symbol-choice.o::before,
+.symbol-choice.o::after,
+.player-symbol.o::before,
+.player-symbol.o::after {
    content: '';
    position: absolute;
    border-radius: 50%;
 }
 
 .cell.o::before,
-.board.o .cell:not(.x):not(.o):hover::before {
+.board.o .cell:not(.x):not(.o):hover::before,
+.symbol-choice.o::before,
+.player-symbol.o::before {
    width: 80%;
    height: 80%;
 }
 
 .cell.o::after,
-.board.o .cell:not(.x):not(.o):hover::after {
-   width: calc(80% * 0.7);
-   height: calc(80% * 0.7);
-   background-color: white;
+.board.o .cell:not(.x):not(.o):hover::after,
+.symbol-choice.o::after,
+.player-symbol.o::after {
+   width: calc(80% * 0.65);
+   height: calc(80% * 0.65);
+   background-color: inherit;
 }
 
 #settings-modal {
@@ -190,13 +230,14 @@ body {
    justify-content: center;
    align-items: center;
    border-radius: 5px;
+   position: relative;
 }
 
 #game-mode {
    display: flex;
 }
 
-#difficulty-div {
+#difficulty-choices {
    display: flex;
    justify-content: space-between;
 
@@ -209,12 +250,12 @@ body {
    box-shadow: inset 0.5px 0.5px 2px 0 rgba(0, 0, 0, 0.15);
 }
 
-#difficulty-div input[type='radio'] {
+#difficulty-choices input[type='radio'] {
    appearance: none;
    display: none;
 }
 
-#difficulty-div label {
+#difficulty-choices label {
    font-family: 'Open Sans', sans-serif;
    font-size: 20px;
    display: flex;
@@ -229,9 +270,10 @@ body {
    transition: linear 0.3s;
    color: #6e6e6edd;
    border: red solid 2px;
+   cursor: pointer;
 }
 
-#difficulty-div input[type='radio']:checked + label {
+#difficulty-choices input[type='radio']:checked + label {
    background-color: #1e90ff;
    color: #f1f3f5;
    font-weight: 900;
