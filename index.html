@@ -18,12 +18,12 @@
          <header id="header">Tic-Tac-Toe</header>
          <div class="players-info">
             <div class="player-info">
-               <h1>P01</h1>
+               <h1>PLAYER-01</h1>
                <div class="player-symbol x"></div>
                <h6>name</h6>
             </div>
             <div class="player-info">
-               <h1>P02</h1>
+               <h1>PLAYER-02</h1>
                <div class="player-symbol o"></div>
                <h6>name</h6>
             </div>
@@ -41,13 +41,14 @@
             <div class="cell" data-index="8"></div>
          </div>
          <footer>
-            <button>reset</button>
-            <button>settings</button>
+            <button>Reset</button>
+            <button>Settings</button>
          </footer>
       </div>
+
       <dialog id="settings-modal">
          <form id="settings-form">
-            <header>Game settings</header>
+            <header id="form-header">Game settings</header>
             <fieldset id="game-mode">
                <div>
                   <input
@@ -123,7 +124,7 @@
                <div class="symbol-choice o"></div>
             </div>
             <footer>
-               <button type="submit">Star Game</button>
+               <button type="submit">Save Settings</button>
             </footer>
          </form>
       </dialog>
