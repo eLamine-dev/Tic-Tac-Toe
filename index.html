@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link
          rel="stylesheet"
-         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
       />
       <link rel="stylesheet" href="reset.css" />
       <link rel="stylesheet" href="style.css" />
@@ -41,8 +41,12 @@
             <div class="cell" data-index="8"></div>
          </div>
          <footer class="bottom-buttons">
-            <button>Reset</button>
-            <button>Settings</button>
+            <button>
+               <span class="material-symbols-outlined"> replay </span>Reset
+            </button>
+            <button>
+               <span class="material-symbols-outlined"> settings </span>Settings
+            </button>
          </footer>
 
          <dialog id="settings-modal">
@@ -73,30 +77,31 @@
                </fieldset>
                <div id="form-body">
                   <fieldset id="player-one">
-                     <label for="player01-name">choose P01 name</label>
+                     <label for="player01-name">PL-01 Name</label>
                      <input
                         type="text"
                         name="player01-name"
-                        placeholder="P01-Name"
+                        placeholder="human-01"
                         maxlength="10"
                         required
                      />
                   </fieldset>
                   <div class="symbol-choice x"></div>
-                  <div>flip symbols (x goes first)</div>
-                  <button>f</button>
+                  <button id="flip-symbols-btn">
+                     <span class="material-symbols-outlined">swap_vert</span>
+                  </button>
                   <fieldset id="player-two">
-                     <label for="player0-name">choose P02 name</label>
+                     <label for="player0-name">PL-02 Name</label>
                      <input
                         type="text"
                         name="player02-name"
-                        placeholder="P02-Name"
+                        placeholder="human-02"
                         maxlength="10"
                         required
                      />
                   </fieldset>
                   <fieldset id="game-level">
-                     <label for="game-level">choose AI difficultly</label>
+                     <label for="game-level">AI difficultly</label>
                      <div id="difficulty-choices">
                         <input
                            type="radio"
