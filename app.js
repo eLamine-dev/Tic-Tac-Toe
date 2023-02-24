@@ -173,9 +173,13 @@ const displayController = (function () {
          if (mode === 'PvP') {
             gameLevel.style.display = 'none';
             player02Name.style.display = 'block';
+            document
+               .getElementById('player02Name')
+               .setAttribute('required', true);
          } else if (mode === 'PvE') {
             gameLevel.style.display = 'block';
             player02Name.style.display = 'none';
+            document.getElementById('player02Name').removeAttribute('required');
          }
       });
    });
@@ -183,18 +187,38 @@ const displayController = (function () {
    const settingsForm = document.getElementById('settings-form');
 
    function getGameSettings() {
+      const gameMode = document.querySelector(
+         'input[name="game-mode"]:checked'
+      ).value;
+      let formData = {};
       function getSymbol(elm) {
          if (elm.classList.contains(X_SYMBOL)) return X_SYMBOL;
          if (elm.classList.contains(O_SYMBOL)) return O_SYMBOL;
       }
       const pl01Symbol = document.getElementById('pl01-symbol');
       const pl02Symbol = document.getElementById('pl02-symbol');
-      const formData = {
-         pl01Name: settingsForm.elements.player01Name.value,
-         pl02Name: settingsForm.elements.player02Name.value,
-         pl01Symbol: getSymbol(pl01Symbol),
-         pl02Symbol: getSymbol(pl02Symbol),
-      };
+      if (gameMode === 'PvP') {
+         formData = {
+            mode: gameMode,
+            pl01Name: settingsForm.elements.player01Name.value,
+            pl02Name: settingsForm.elements.player02Name.value,
+            pl01Symbol: getSymbol(pl01Symbol),
+            pl02Symbol: getSymbol(pl02Symbol),
+         };
+      } else if (gameMode === 'PvE') {
+         const aiDifficulty = document.querySelector(
+            'input[name="game-level"]:checked'
+         ).value;
+
+         formData = {
+            mode: gameMode,
+            pl01Name: settingsForm.elements.player01Name.value,
+            pl02Name: `${aiDifficulty} AI`,
+            pl01Symbol: getSymbol(pl01Symbol),
+            pl02Symbol: getSymbol(pl02Symbol),
+         };
+      }
+
       return formData;
    }
 
