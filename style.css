@@ -1,12 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
+:root {
+   --theme-darker: #0f172a;
+   --theme-dark: #1e293b;
+   --theme-medium: #475569;
+   --theme-light: #94a3b8;
+   --theme-lighter: #cbd5e1;
+   --red: #dc2626;
+   --blue: #1d4ed8;
+}
+
 body {
    height: 100vh;
    display: flex;
    align-items: center;
    justify-content: center;
    font-family: 'Lexend', sans-serif;
-   background-color: #0f172a;
+   background-color: var(--theme-darker);
 }
 
 * {
@@ -17,7 +27,7 @@ body {
 }
 
 #header {
-   color: #e2e8f0;
+   color: var(--theme-lighter);
    font-size: 3.5rem;
    font-weight: 700;
    letter-spacing: 0.3rem;
@@ -32,13 +42,14 @@ body {
    justify-content: space-around;
    align-content: center;
    align-items: center;
-   background-color: #0f172a;
+   background-color: var(--theme-darker);
    border-radius: 10px;
-   box-shadow: #475569 0px 2px 4px 0px, #475569 0px 2px 16px 0px;
+   box-shadow: var(--theme-medium) 0px 2px 4px 0px,
+      var(--theme-medium) 0px 2px 16px 0px;
 }
 
 #board {
-   background-color: #0f172a;
+   background-color: var(--theme-darker);
    height: min(430px, 95vw);
    width: min(430px, 95vw);
    display: grid;
@@ -55,7 +66,7 @@ body {
    grid-template-rows: 1fr 1fr;
    width: 50%;
    align-items: center;
-   background-color: #1e293b;
+   background-color: var(--theme-dark);
    gap: 15px;
    padding: 10px;
    border-radius: 5px;
@@ -65,13 +76,13 @@ body {
    width: min(430px, 95vw);
    display: flex;
    gap: 10px;
-   color: #cbd5e1;
+   color: var(--theme-lighter);
 }
 
 .player-symbol {
    height: 50px;
    width: 100%;
-   background-color: #0f172a;
+   background-color: var(--theme-darker);
    justify-self: end;
    display: flex;
    justify-content: center;
@@ -82,7 +93,7 @@ body {
 }
 
 .cell {
-   background-color: #1e293b;
+   background-color: var(--theme-dark);
    display: flex;
    align-items: center;
    justify-content: center;
@@ -102,19 +113,19 @@ body {
 .symbol-choice.x::after,
 .player-symbol.x::before,
 .player-symbol.x::after {
-   background-color: #dc2626;
+   background-color: var(--red);
 }
 
 .cell.o::before,
 .symbol-choice.o::before,
 .player-symbol.o::before {
-   background-color: #1d4ed8;
+   background-color: var(--blue);
 }
 
 .board.x .cell:not(.x):not(.o):hover::before,
 .board.x .cell:not(.x):not(.o):hover::after,
 .board.o .cell:not(.x):not(.o):hover::before {
-   background-color: #475569;
+   background-color: var(--theme-darker);
 }
 
 .cell.x::before,
@@ -176,16 +187,20 @@ body {
 }
 
 #settings-modal {
+   color: var(--theme-lighter);
    height: 450px;
    width: min(430px, 100vw);
    position: fixed;
    top: 55%;
    left: 50%;
    transform: translate(-50%, -50%);
-   background-color: rgb(84, 54, 193);
+   background-color: var(--theme-darker);
    border: none;
    border-radius: 1rem;
    overflow: hidden;
+   box-shadow: var(--theme-medium) 0px 2px 4px 0px,
+      var(--theme-medium) 0px 2px 16px 0px;
+   padding: 20px;
 }
 
 #settings-modal[open] {
@@ -204,7 +219,7 @@ body {
 }
 
 #settings-modal::backdrop {
-   background: rgba(0, 0, 0, 0.3);
+   background: #0f172a;
    backdrop-filter: blur(0.2rem);
 }
 
@@ -217,12 +232,41 @@ body {
    align-items: center;
 }
 
+#form-header {
+   height: 20%;
+   align-self: center;
+   justify-self: center;
+}
+
+#game-mode {
+   display: flex;
+   justify-content: space-between;
+   gap: 30px;
+}
+
+#game-mode label {
+   font-size: 1.5rem;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-color: inherit;
+   width: 150px;
+   height: 50px;
+   text-align: center;
+   border-radius: 4px;
+   overflow: hidden;
+   transition: linear 0.3s;
+   color: var(--theme-light);
+   background-color: var(--theme-dark);
+   cursor: pointer;
+}
+
 #settings-form input[type='text'] {
-   color: black;
+   color: var(--theme-light);
    font-size: 1.3rem;
    padding: 0.8rem;
    border-radius: 0.2rem;
-   background-color: white;
+   background-color: var(--theme-dark);
    border: none;
    width: 100%;
    align-self: center;
@@ -239,7 +283,7 @@ body {
    width: 90%;
    flex: 1;
    display: grid;
-   grid-template-columns: 80% 20%;
+   grid-template-columns: 85% 15%;
    grid-template-rows: 80px 80px;
    font-size: 1.5rem;
    align-content: center;
@@ -250,17 +294,13 @@ body {
 .symbol-choice {
    height: 50px;
    width: 50px;
-   background-color: burlywood;
+   background-color: var(--theme-dark);
    justify-self: end;
    display: flex;
    justify-content: center;
    align-items: center;
    border-radius: 5px;
    position: relative;
-}
-
-#game-mode {
-   display: flex;
 }
 
 #difficulty-choices {
@@ -270,11 +310,10 @@ body {
    /* height: 50px; */
    justify-content: space-between;
    gap: 5px;
-   border-radius: 4px;
-   box-shadow: inset 0.5px 0.5px 2px 0 rgba(0, 0, 0, 0.15);
 }
 
-#difficulty-choices input[type='radio'] {
+#difficulty-choices input[type='radio'],
+#game-mode input[type='radio'] {
    appearance: none;
    display: none;
 }
@@ -291,15 +330,16 @@ body {
    border-radius: 4px;
    overflow: hidden;
    transition: linear 0.3s;
-   color: #6e6e6edd;
-   border: red solid 2px;
+   color: var(--theme-light);
+   background-color: var(--theme-dark);
    cursor: pointer;
 }
 
-#difficulty-choices input[type='radio']:checked + label {
-   background-color: #1e90ff;
-   color: #f1f3f5;
-   font-weight: 900;
+#difficulty-choices input[type='radio']:checked + label,
+#game-mode input[type='radio']:checked + label {
+   background-color: var(--theme-medium);
+   color: var(--theme-lighter);
+   font-weight: 800;
    transition: 0.3s;
 }
 
@@ -316,6 +356,6 @@ button {
    height: 50px;
    min-width: 140px;
    padding: 10px;
-   background-color: #334155;
-   color: #e2e8f0;
+   background-color: var(--theme-dark);
+   color: var(--theme-lighter);
 }
