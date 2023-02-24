@@ -158,12 +158,15 @@ const displayController = (function () {
    }
    setBoardHoverClass(gameEngin.getCurrentPlayer());
 
-   const gameSettings = document.getElementById('settings-modal');
+   const settingsModal = document.getElementById('settings-modal');
+   settingsModal.addEventListener('cancel', (event) => {
+      event.preventDefault();
+   });
 
    const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
    const gameLevel = document.getElementById('game-level');
    const player02Name = document.getElementById('player-two');
-   gameSettings.showModal();
+   settingsModal.showModal();
    gameModeBtns.forEach((btn) => {
       btn.addEventListener('change', (event) => {
          const mode = event.target.value;
@@ -175,6 +178,31 @@ const displayController = (function () {
             player02Name.style.display = 'none';
          }
       });
+   });
+
+   const settingsForm = document.getElementById('settings-form');
+
+   function getGameSettings() {
+      function getSymbol(elm) {
+         if (elm.classList.contains(X_SYMBOL)) return X_SYMBOL;
+         if (elm.classList.contains(O_SYMBOL)) return O_SYMBOL;
+      }
+      const pl01Symbol = document.getElementById('pl01-symbol');
+      const pl02Symbol = document.getElementById('pl02-symbol');
+      const formData = {
+         pl01Name: settingsForm.elements.player01Name.value,
+         pl02Name: settingsForm.elements.player02Name.value,
+         pl01Symbol: getSymbol(pl01Symbol),
+         pl02Symbol: getSymbol(pl02Symbol),
+      };
+      return formData;
+   }
+
+   settingsForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let gameSettings = getGameSettings();
+      settingsModal.close();
+      console.log(gameSettings);
    });
 })();
 

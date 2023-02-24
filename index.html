@@ -51,7 +51,8 @@
 
          <dialog id="settings-modal">
             <form id="settings-form">
-               <header id="form-header">Game settings</header>
+               <header id="form-header">Tic-Tac-Toe</header>
+               <h1 id="form-title">Game settings</h1>
                <fieldset id="game-mode">
                   <div>
                      <input
@@ -75,26 +76,27 @@
                      <label for="PvE">PvE</label>
                   </div>
                </fieldset>
+
                <div id="form-body">
                   <fieldset id="player-one">
-                     <label for="player01-name">PL-01 Name</label>
+                     <label for="player01Name">PL-01 Name</label>
                      <input
                         type="text"
-                        name="player01-name"
+                        name="player01Name"
                         placeholder="human-01"
                         maxlength="10"
                         required
                      />
                   </fieldset>
-                  <div class="symbol-choice x"></div>
+                  <div id="pl01-symbol" class="symbol-choice x"></div>
                   <button id="flip-symbols-btn">
                      <span class="material-symbols-outlined">swap_vert</span>
                   </button>
                   <fieldset id="player-two">
-                     <label for="player0-name">PL-02 Name</label>
+                     <label for="player02Name">PL-02 Name</label>
                      <input
                         type="text"
-                        name="player02-name"
+                        name="player02Name"
                         placeholder="human-02"
                         maxlength="10"
                         required
@@ -131,10 +133,15 @@
                         <label for="hard">HARD</label>
                      </div>
                   </fieldset>
-                  <div class="symbol-choice o"></div>
+                  <div id="pl02-symbol" class="symbol-choice o"></div>
                </div>
+               <div id="note">* x plays first</div>
                <footer>
-                  <button type="submit">Save</button>
+                  <button type="submit" id="save-settings">
+                     Save<span class="material-symbols-outlined">
+                        arrow_forward_ios
+                     </span>
+                  </button>
                </footer>
             </form>
          </dialog>

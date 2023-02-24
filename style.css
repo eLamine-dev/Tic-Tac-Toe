@@ -44,8 +44,8 @@ body {
    align-items: center;
    background-color: var(--theme-darker);
    border-radius: 10px;
-   box-shadow: var(--theme-medium) 0px 2px 4px 0px,
-      var(--theme-medium) 0px 2px 16px 0px;
+   box-shadow: var(--theme-medium) 0px 0px 4px 0px,
+      var(--theme-medium) 0px 0px 16px 0px;
 }
 
 #board {
@@ -188,7 +188,7 @@ body {
 
 #settings-modal {
    color: var(--theme-lighter);
-   height: 550px;
+   height: 600px;
    width: min(430px, 100vw);
    position: fixed;
    top: 50%;
@@ -198,8 +198,8 @@ body {
    border: none;
    border-radius: 1rem;
    overflow: hidden;
-   box-shadow: var(--theme-medium) 0px 2px 4px 0px,
-      var(--theme-medium) 0px 2px 16px 0px;
+   box-shadow: var(--theme-medium) 0px 0px 4px 0px,
+      var(--theme-medium) 0px 0px 16px 0px;
    padding: 20px;
 }
 
@@ -233,11 +233,20 @@ body {
 }
 
 #form-header {
+   color: var(--theme-light);
+   height: 10%;
+   font-size: 3rem;
+}
+
+#form-title {
    color: var(--theme-lighter);
+   font-size: 1.3rem;
+}
+
+#settings-modal footer {
    height: 15%;
-   align-self: center;
-   justify-self: center;
-   font-size: 2rem;
+   display: flex;
+   align-items: end;
 }
 
 #game-mode {
@@ -284,12 +293,9 @@ body {
 
 #form-body {
    width: 90%;
-   flex: 1;
    display: grid;
    grid-template-columns: 85% 15%;
    grid-template-rows: 110px 110px;
-   font-size: 1.5rem;
-   align-content: center;
    align-items: flex-end;
    gap: 5px;
    position: relative;
@@ -297,7 +303,7 @@ body {
 
 #form-body label {
    color: var(--theme-lighter);
-   font-size: 1.3rem;
+   font-size: 1.2rem;
 }
 
 #flip-symbols-btn {
@@ -305,9 +311,12 @@ body {
    width: 30px;
    position: absolute;
    color: var(--theme-light);
-   top: 54%;
+   top: 57%;
    left: 90%;
-   padding: 4px;
+   padding: 5px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
 }
 
 .symbol-choice {
@@ -320,6 +329,13 @@ body {
    align-items: center;
    border-radius: 5px;
    position: relative;
+}
+
+#note {
+   align-self: start;
+   font-size: 1.2rem;
+   padding-left: 25px;
+   color: var(--theme-light);
 }
 
 #difficulty-choices {
@@ -367,13 +383,14 @@ body {
    justify-content: space-around;
 }
 
-.bottom-buttons button {
+.bottom-buttons button,
+#save-settings {
    height: 50px;
-   min-width: 140px;
+   min-width: 150px;
    display: flex;
    align-items: center;
    justify-content: center;
-   gap: 5px;
+   gap: 10px;
 }
 
 button {
@@ -384,6 +401,10 @@ button {
    background-color: var(--theme-dark);
    color: var(--theme-lighter);
    cursor: pointer;
+}
+
+button:hover {
+   background-color: var(--theme-medium);
 }
 
 .material-symbols-outlined {
