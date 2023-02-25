@@ -7,8 +7,11 @@
    --theme-light: #94a3b8;
    --theme-lighter: #cbd5e1;
    --red: #dc2626;
+   --dark-red: #7f1d1d;
    --blue: #1d4ed8;
+   --dark-blue: #1e3a8a;
    --green: #15803d;
+   --dark-green: #166534;
 }
 
 body {
@@ -60,16 +63,12 @@ body {
    position: relative;
 }
 
-#board :not(#message) {
-   filter: blur(2px);
-}
-
 #message {
    padding: 20px;
    min-width: 50%;
    white-space: nowrap;
    border-radius: 10px;
-   background-color: var(--green);
+   background-color: var(--theme-medium);
    color: var(--theme-lighter);
    display: flex;
    align-items: center;
@@ -80,6 +79,8 @@ body {
    left: 50%;
    transform: translateX(-50%) translateY(-50%);
    display: none;
+   box-shadow: var(--theme-light) 0px 0px 2px 0px,
+      var(--theme-light) 0px 0px 10px 0px;
 }
 
 .player-info {
@@ -94,6 +95,11 @@ body {
    gap: 15px;
    padding: 10px;
    border-radius: 5px;
+}
+
+.currentPlayer {
+   box-shadow: var(--theme-light) 0px 0px 2px 0px,
+      var(--theme-light) 0px 0px 10px 0px;
 }
 
 .players-info {

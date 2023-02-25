@@ -85,11 +85,12 @@ let gameEngin = (function () {
    }
 
    function checkForEnd([state, index]) {
-      if (isWinningMove(state, index)) {
-         pubsub.publish('gameEnded', currentPlayer);
+      const winCombination = findWinCombination(state, index);
+      if (winCombination) {
+         pubsub.publish('gameEnded', [currentPlayer, winCombination]);
          console.log(currentPlayer.name);
       } else if (isDrawEnd(state)) {
-         pubsub.publish('gameEnded', 'draw');
+         pubsub.publish('gameEnded', ['draw']);
          console.log('draw');
       } else {
          alternateTurn();
@@ -104,12 +105,12 @@ let gameEngin = (function () {
       return currentPlayer;
    }
 
-   function isWinningMove(state, index) {
+   function findWinCombination(state, index) {
       const possibleWins = WINNING_COMBINATIONS.filter((combination) =>
          combination.includes(Number(index))
       );
 
-      return possibleWins.some((combination) =>
+      return possibleWins.find((combination) =>
          combination.every((i) => state[i] === currentPlayer.symbol)
       );
    }
@@ -258,12 +259,29 @@ const displayController = (function () {
    });
 
    pubsub.subscribe('gameEnded', endGame);
-   function endGame(winner) {
+   function endGame([winner, winCombination]) {
       const message = document.getElementById('message');
+      const boardBackground = document.querySelectorAll(
+         '.board :not(#message)'
+      );
       if (winner !== 'draw') {
-         message.innerText = `${winner.name} Won!`;
+         message.innerText = `${winner.name.toUpperCase()} Won!`;
+         winCombination.forEach((index) => {
+            const cell = document.querySelector(`[data-index="${index}"]`);
+            if (winner.symbol === X_SYMBOL) {
+               cell.style.backgroundColor = 'var(--dark-red)';
+               message.style.backgroundColor = 'var(--red)';
+            } else {
+               cell.style.backgroundColor = 'var(--dark-blue)';
+               message.style.backgroundColor = 'var(--blue)';
+            }
+         });
       }
+
       message.style.display = 'block';
+      boardBackground.forEach((elm) => {
+         elm.style.filter = 'opacity(0.5)';
+      });
    }
 })();
 
