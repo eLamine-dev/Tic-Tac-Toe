@@ -8,6 +8,7 @@
    --theme-lighter: #cbd5e1;
    --red: #dc2626;
    --blue: #1d4ed8;
+   --green: #15803d;
 }
 
 body {
@@ -56,6 +57,29 @@ body {
    grid-template-columns: repeat(3, 1fr);
    grid-template-rows: repeat(3, 1fr);
    gap: 15px;
+   position: relative;
+}
+
+#board :not(#message) {
+   filter: blur(2px);
+}
+
+#message {
+   padding: 20px;
+   min-width: 50%;
+   white-space: nowrap;
+   border-radius: 10px;
+   background-color: var(--green);
+   color: var(--theme-lighter);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 2rem;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translateX(-50%) translateY(-50%);
+   display: none;
 }
 
 .player-info {
@@ -75,7 +99,7 @@ body {
 .players-info {
    width: min(430px, 95vw);
    display: flex;
-   gap: 10px;
+   gap: 15px;
    color: var(--theme-lighter);
 }
 
@@ -197,7 +221,6 @@ body {
    background-color: var(--theme-darker);
    border: none;
    border-radius: 1rem;
-   overflow: hidden;
    box-shadow: var(--theme-medium) 0px 0px 4px 0px,
       var(--theme-medium) 0px 0px 16px 0px;
    padding: 20px;
@@ -219,7 +242,53 @@ body {
 }
 
 #settings-modal::backdrop {
-   background: #0f172a;
+   /* background: #0f172a; */
+   background: radial-gradient(
+         circle at top left,
+         transparent 9%,
+         #1e293b 10%,
+         #1e293b 15%,
+         transparent 16%
+      ),
+      radial-gradient(
+         circle at bottom left,
+         transparent 9%,
+         #1e293b 10%,
+         #1e293b 15%,
+         transparent 16%
+      ),
+      radial-gradient(
+         circle at top right,
+         transparent 9%,
+         #1e293b 10%,
+         #1e293b 15%,
+         transparent 16%
+      ),
+      radial-gradient(
+         circle at bottom right,
+         transparent 9%,
+         #1e293b 10%,
+         #1e293b 15%,
+         transparent 16%
+      ),
+      radial-gradient(circle, transparent 30%, #0f172a 30%),
+      linear-gradient(
+         45deg,
+         transparent 46%,
+         #1e293b 47%,
+         #1e293b 52%,
+         transparent 53%
+      ),
+      linear-gradient(
+         135deg,
+         transparent 46%,
+         #1e293b 47%,
+         #1e293b 52%,
+         transparent 53%
+      );
+   background-size: 12em 12em;
+   background-color: #0f172a;
+   opacity: 1;
 }
 
 #settings-form {
@@ -400,6 +469,7 @@ button {
    background-color: var(--theme-dark);
    color: var(--theme-lighter);
    cursor: pointer;
+   transition: linear 0.3s;
 }
 
 button:hover {

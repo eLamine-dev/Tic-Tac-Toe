@@ -86,10 +86,10 @@ let gameEngin = (function () {
 
    function checkForEnd([state, index]) {
       if (isWinningMove(state, index)) {
-         pubsub.publish('winner', currentPlayer);
+         pubsub.publish('gameEnded', currentPlayer);
          console.log(currentPlayer.name);
       } else if (isDrawEnd(state)) {
-         pubsub.publish('draw');
+         pubsub.publish('gameEnded', 'draw');
          console.log('draw');
       } else {
          alternateTurn();
@@ -223,7 +223,6 @@ const displayController = (function () {
          const aiDifficulty = document.querySelector(
             'input[name="game-level"]:checked'
          ).value;
-
          formData = {
             mode: gameMode,
             pl01Name: settingsForm.elements.player01Name.value,
@@ -232,6 +231,7 @@ const displayController = (function () {
             pl02Symbol: getSymbol(pl02Symbol),
             pl01Header: 'PLAYER',
             pl02Header: 'COMPUTER',
+            difficulty: aiDifficulty,
          };
       }
 
@@ -256,6 +256,15 @@ const displayController = (function () {
       settingsModal.close();
       console.log(formData);
    });
+
+   pubsub.subscribe('gameEnded', endGame);
+   function endGame(winner) {
+      const message = document.getElementById('message');
+      if (winner !== 'draw') {
+         message.innerText = `${winner.name} Won!`;
+      }
+      message.style.display = 'block';
+   }
 })();
 
 // ======================================================================
