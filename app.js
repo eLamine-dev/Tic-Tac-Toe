@@ -1,7 +1,7 @@
 const X_SYMBOL = 'x';
 const O_SYMBOL = 'o';
 
-// pubsub module ==========================================================================
+// pubsub module ======================================================================
 
 const pubsub = (() => {
    const events = {};
@@ -53,9 +53,9 @@ const pubsub = (() => {
    };
 })();
 
-// player factory =================================================================================================
+// player factory ======================================================================
 const createPlayer = (name, symbol) => ({ name, symbol });
-// game logic  ====================================================================================================
+// game logic  ======================================================================
 
 let gameEngin = (function () {
    const WINNING_COMBINATIONS = [
@@ -69,13 +69,20 @@ let gameEngin = (function () {
       [2, 4, 6],
    ];
 
-   const player01 = createPlayer('amine', X_SYMBOL);
-   const player02 = createPlayer('bot', O_SYMBOL);
-   const players = [player01, player02];
-
-   let currentPlayer = player01;
+   let player01;
+   let player02;
+   let players;
+   let currentPlayer;
 
    pubsub.subscribe('stateUpdated', checkForEnd);
+   pubsub.subscribe('newSettings', setupNewGame);
+
+   function setupNewGame(formData) {
+      player01 = createPlayer(formData.pl01Name, formData.pl01Symbol);
+      player02 = createPlayer(formData.pl02Name, formData.pl02Symbol);
+      players = [player01, player02];
+      currentPlayer = players.find((player) => player.symbol === X_SYMBOL);
+   }
 
    function checkForEnd([state, index]) {
       if (isWinningMove(state, index)) {
@@ -114,7 +121,7 @@ let gameEngin = (function () {
    return { getCurrentPlayer };
 })();
 
-// game board module ========================================================================================
+// game board module ======================================================================
 
 const GameBoard = (function () {
    const state = new Array(9);
@@ -132,7 +139,7 @@ const GameBoard = (function () {
    }
 })();
 
-// display controller ==========================================================================================
+// display controller ======================================================================
 
 const displayController = (function () {
    const board = document.getElementById('board');
@@ -156,7 +163,6 @@ const displayController = (function () {
       board.classList.remove('o');
       board.classList.add(player.symbol);
    }
-   setBoardHoverClass(gameEngin.getCurrentPlayer());
 
    const settingsModal = document.getElementById('settings-modal');
    settingsModal.addEventListener('cancel', (event) => {
@@ -243,9 +249,13 @@ const displayController = (function () {
       pl01InfoSymbol.classList.add(formData.pl01Symbol);
       pl02InfoSymbol.classList.add(formData.pl02Symbol);
 
+      pubsub.publish('newSettings', formData);
+
+      setBoardHoverClass(gameEngin.getCurrentPlayer());
+
       settingsModal.close();
       console.log(formData);
    });
 })();
 
-// ============================================================================================================
+// ======================================================================
