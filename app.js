@@ -165,26 +165,32 @@ const displayController = (function () {
 
    const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
    const gameLevel = document.getElementById('game-level');
-   const player02Name = document.getElementById('player-two');
+   const player02input = document.getElementById('player-two');
    settingsModal.showModal();
    gameModeBtns.forEach((btn) => {
       btn.addEventListener('change', (event) => {
          const mode = event.target.value;
          if (mode === 'PvP') {
             gameLevel.style.display = 'none';
-            player02Name.style.display = 'block';
+            player02input.style.display = 'block';
             document
                .getElementById('player02Name')
                .setAttribute('required', true);
          } else if (mode === 'PvE') {
             gameLevel.style.display = 'block';
-            player02Name.style.display = 'none';
+            player02input.style.display = 'none';
             document.getElementById('player02Name').removeAttribute('required');
          }
       });
    });
 
    const settingsForm = document.getElementById('settings-form');
+   const pl01InfoHeader = document.getElementById('pl01-info-header');
+   const pl01InfoName = document.getElementById('pl01-info-name');
+   const pl02InfoHeader = document.getElementById('pl02-info-header');
+   const pl02InfoName = document.getElementById('pl02-info-name');
+   const pl01InfoSymbol = document.getElementById('pl01-info-symbol');
+   const pl02InfoSymbol = document.getElementById('pl02-info-symbol');
 
    function getGameSettings() {
       const gameMode = document.querySelector(
@@ -204,6 +210,8 @@ const displayController = (function () {
             pl02Name: settingsForm.elements.player02Name.value,
             pl01Symbol: getSymbol(pl01Symbol),
             pl02Symbol: getSymbol(pl02Symbol),
+            pl01Header: 'PLAYER-01',
+            pl02Header: 'PLAYER-02',
          };
       } else if (gameMode === 'PvE') {
          const aiDifficulty = document.querySelector(
@@ -213,9 +221,11 @@ const displayController = (function () {
          formData = {
             mode: gameMode,
             pl01Name: settingsForm.elements.player01Name.value,
-            pl02Name: `${aiDifficulty} AI`,
+            pl02Name: `MINIMAX AI`,
             pl01Symbol: getSymbol(pl01Symbol),
             pl02Symbol: getSymbol(pl02Symbol),
+            pl01Header: 'PLAYER',
+            pl02Header: 'COMPUTER',
          };
       }
 
@@ -224,9 +234,17 @@ const displayController = (function () {
 
    settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      let gameSettings = getGameSettings();
+      let formData = getGameSettings();
+
+      pl01InfoName.innerText = formData.pl01Name.toUpperCase();
+      pl02InfoName.innerText = formData.pl02Name.toUpperCase();
+      pl01InfoHeader.innerText = formData.pl01Header;
+      pl02InfoHeader.innerText = formData.pl02Header;
+      pl01InfoSymbol.classList.add(formData.pl01Symbol);
+      pl02InfoSymbol.classList.add(formData.pl02Symbol);
+
       settingsModal.close();
-      console.log(gameSettings);
+      console.log(formData);
    });
 })();
 

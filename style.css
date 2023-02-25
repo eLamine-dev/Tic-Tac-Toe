@@ -220,7 +220,6 @@ body {
 
 #settings-modal::backdrop {
    background: #0f172a;
-   backdrop-filter: blur(0.2rem);
 }
 
 #settings-form {
