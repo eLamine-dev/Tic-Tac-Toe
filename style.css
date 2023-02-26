@@ -82,7 +82,7 @@ body {
 }
 
 #game-container {
-   height: 850px;
+   height: min(850px, 100vh);
    padding: 15px;
    width: min(460px, 100vw);
    display: flex;
@@ -124,7 +124,7 @@ body {
    transform: translateX(-50%) translateY(-50%);
    display: none;
    box-shadow: var(--theme-light) 0px 0px 2px 0px,
-      var(--theme-light) 0px 0px 10px 0px;
+      var(--theme-light) 0px 0px 6px 0px;
    animation: grow 500ms;
 }
 

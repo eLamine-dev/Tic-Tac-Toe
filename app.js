@@ -165,6 +165,7 @@ const displayController = (function () {
    }
 
    function setBoardHoverClass(player) {
+      if (!player) return;
       board.classList.remove('x');
       board.classList.remove('o');
       board.classList.add(player.symbol);
@@ -268,6 +269,10 @@ const displayController = (function () {
    settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
       let formData = getGameSettings();
+      [pl01InfoSymbol, pl02InfoSymbol].forEach((symbol) => {
+         symbol.classList.remove(X_SYMBOL);
+         symbol.classList.remove(O_SYMBOL);
+      });
 
       pl01InfoName.innerText = formData.pl01Name.toUpperCase();
       pl02InfoName.innerText = formData.pl02Name.toUpperCase();
@@ -283,13 +288,13 @@ const displayController = (function () {
       lightCurrentSymbol(currentPlayer);
       resetBoard();
       settingsModal.close();
-      // settingsForm.reset();
    });
 
    const message = document.getElementById('message');
    const boardCells = document.querySelectorAll('.board :not(#message)');
 
    pubsub.subscribe('gameEnded', endGame);
+
    function endGame([winner, winCombination]) {
       if (winner !== 'draw') {
          message.innerText = `${winner.name.toUpperCase()} Won!`;
@@ -325,7 +330,6 @@ const displayController = (function () {
       boardCells.forEach((cell) => {
          cell.style.backgroundColor = 'var(--theme-dark)';
          if (cell.classList.contains(O_SYMBOL)) cell.classList.toggle(O_SYMBOL);
-
          if (cell.classList.contains(X_SYMBOL)) cell.classList.toggle(X_SYMBOL);
       });
 
@@ -351,4 +355,4 @@ const displayController = (function () {
    });
 })();
 
-// ======================================================================
+// Minimax Algorithm module ======================================================================
