@@ -88,10 +88,8 @@ let gameEngin = (function () {
       const winCombination = findWinCombination(state, index);
       if (winCombination) {
          pubsub.publish('gameEnded', [currentPlayer, winCombination]);
-         console.log(currentPlayer.name);
       } else if (isDrawEnd(state)) {
          pubsub.publish('gameEnded', ['draw']);
-         console.log('draw');
       } else {
          alternateTurn();
       }
@@ -128,7 +126,7 @@ const GameBoard = (function () {
    let state = new Array(9);
 
    pubsub.subscribe('cellClicked', updateBoardState);
-   pubsub.subscribe('gameEnded', resetState);
+   pubsub.subscribe('reset', resetState);
 
    function updateBoardState(index) {
       const currentPlayer = gameEngin.getCurrentPlayer();
@@ -322,6 +320,7 @@ const displayController = (function () {
    resetBtn.addEventListener('click', resetBoard);
 
    function resetBoard() {
+      pubsub.publish('reset');
       message.style.display = 'none';
       boardCells.forEach((cell) => {
          cell.style.backgroundColor = 'var(--theme-dark)';
