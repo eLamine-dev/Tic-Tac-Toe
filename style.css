@@ -81,6 +81,24 @@ body {
    display: none;
    box-shadow: var(--theme-light) 0px 0px 2px 0px,
       var(--theme-light) 0px 0px 10px 0px;
+   animation: grow 500ms;
+}
+
+@keyframes grow {
+   0% {
+      display: none;
+      opacity: 0;
+      transform: translateX(-50%) translateY(-50%);
+   }
+   1% {
+      display: block;
+      opacity: 0;
+      transform: translateX(-50%) translateY(-50%) scale(0);
+   }
+   100% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-50%) scale(1);
+   }
 }
 
 .player-info {
@@ -97,9 +115,10 @@ body {
    border-radius: 5px;
 }
 
-.currentPlayer {
+.light {
    box-shadow: var(--theme-light) 0px 0px 2px 0px,
-      var(--theme-light) 0px 0px 10px 0px;
+      var(--theme-light) 0px 0px 8px 0px;
+   filter: brightness(2);
 }
 
 .players-info {

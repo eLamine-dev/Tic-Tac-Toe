@@ -125,9 +125,10 @@ let gameEngin = (function () {
 // game board module ======================================================================
 
 const GameBoard = (function () {
-   const state = new Array(9);
+   let state = new Array(9);
 
    pubsub.subscribe('cellClicked', updateBoardState);
+   pubsub.subscribe('gameEnded', resetState);
 
    function updateBoardState(index) {
       const currentPlayer = gameEngin.getCurrentPlayer();
@@ -135,8 +136,10 @@ const GameBoard = (function () {
          state[index] = currentPlayer.symbol;
          pubsub.publish('stateUpdated', [state, index]);
       }
+   }
 
-      console.log(state);
+   function resetState() {
+      state = new Array(9);
    }
 })();
 
@@ -149,20 +152,35 @@ const displayController = (function () {
 
    function updateCell([state, index]) {
       const cell = document.querySelector(`[data-index="${index}"]`);
+      const currentPlayer = gameEngin.getCurrentPlayer();
       cell.classList.add(state[index]);
-      setBoardHoverClass(gameEngin.getCurrentPlayer());
+      setBoardHoverClass(currentPlayer);
+      lightCurrentSymbol(currentPlayer);
    }
 
-   board.addEventListener('click', (event) => {
+   board.addEventListener('click', publishCellEvent);
+
+   function publishCellEvent(event) {
       if (!event.target.classList.contains('cell')) return;
       const cellIndex = event.target.dataset.index;
       pubsub.publish('cellClicked', cellIndex);
-   });
+   }
 
    function setBoardHoverClass(player) {
       board.classList.remove('x');
       board.classList.remove('o');
       board.classList.add(player.symbol);
+   }
+
+   function lightCurrentSymbol(player) {
+      const playersSymbols = document.querySelectorAll('.player-symbol');
+      playersSymbols.forEach((symbol) => {
+         if (symbol.classList.contains(player.symbol)) {
+            symbol.classList.add('light');
+         } else {
+            symbol.classList.remove('light');
+         }
+      });
    }
 
    const settingsModal = document.getElementById('settings-modal');
@@ -198,7 +216,18 @@ const displayController = (function () {
    const pl02InfoName = document.getElementById('pl02-info-name');
    const pl01InfoSymbol = document.getElementById('pl01-info-symbol');
    const pl02InfoSymbol = document.getElementById('pl02-info-symbol');
+   const pl01SymbolChoice = document.getElementById('pl01-symbol-choice');
+   const pl02SymbolChoice = document.getElementById('pl02-symbol-choice');
+   const flipSymbolsBtn = document.getElementById('flip-symbols-btn');
 
+   flipSymbolsBtn.addEventListener('click', flipSymbols);
+   function flipSymbols(e) {
+      e.preventDefault();
+      [pl01SymbolChoice, pl02SymbolChoice].forEach((symbol) => {
+         symbol.classList.toggle(X_SYMBOL);
+         symbol.classList.toggle(O_SYMBOL);
+      });
+   }
    function getGameSettings() {
       const gameMode = document.querySelector(
          'input[name="game-mode"]:checked'
@@ -208,15 +237,14 @@ const displayController = (function () {
          if (elm.classList.contains(X_SYMBOL)) return X_SYMBOL;
          if (elm.classList.contains(O_SYMBOL)) return O_SYMBOL;
       }
-      const pl01Symbol = document.getElementById('pl01-symbol');
-      const pl02Symbol = document.getElementById('pl02-symbol');
+
       if (gameMode === 'PvP') {
          formData = {
             mode: gameMode,
             pl01Name: settingsForm.elements.player01Name.value,
             pl02Name: settingsForm.elements.player02Name.value,
-            pl01Symbol: getSymbol(pl01Symbol),
-            pl02Symbol: getSymbol(pl02Symbol),
+            pl01Symbol: getSymbol(pl01SymbolChoice),
+            pl02Symbol: getSymbol(pl02SymbolChoice),
             pl01Header: 'PLAYER-01',
             pl02Header: 'PLAYER-02',
          };
@@ -228,8 +256,8 @@ const displayController = (function () {
             mode: gameMode,
             pl01Name: settingsForm.elements.player01Name.value,
             pl02Name: `MINIMAX AI`,
-            pl01Symbol: getSymbol(pl01Symbol),
-            pl02Symbol: getSymbol(pl02Symbol),
+            pl01Symbol: getSymbol(pl01SymbolChoice),
+            pl02Symbol: getSymbol(pl02SymbolChoice),
             pl01Header: 'PLAYER',
             pl02Header: 'COMPUTER',
             difficulty: aiDifficulty,
@@ -251,11 +279,13 @@ const displayController = (function () {
       pl02InfoSymbol.classList.add(formData.pl02Symbol);
 
       pubsub.publish('newSettings', formData);
+      let currentPlayer = gameEngin.getCurrentPlayer();
 
-      setBoardHoverClass(gameEngin.getCurrentPlayer());
+      setBoardHoverClass(currentPlayer);
+      lightCurrentSymbol(currentPlayer);
 
       settingsModal.close();
-      console.log(formData);
+      settingsForm.reset();
    });
 
    pubsub.subscribe('gameEnded', endGame);
@@ -276,6 +306,7 @@ const displayController = (function () {
                message.style.backgroundColor = 'var(--blue)';
             }
          });
+         board.removeEventListener('click', publishCellEvent);
       }
 
       message.style.display = 'block';
