@@ -76,7 +76,7 @@ body {
 
 #header {
    color: var(--theme-lighter);
-   font-size: 3.5rem;
+   font-size: min(3.5rem, 10vw);
    font-weight: 700;
    letter-spacing: 0.3rem;
 }
