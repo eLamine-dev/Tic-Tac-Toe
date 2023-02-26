@@ -188,20 +188,20 @@ const displayController = (function () {
 
    const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
    const gameLevel = document.getElementById('game-level');
-   const player02input = document.getElementById('player-two');
+   const player02Div = document.getElementById('player-two');
    settingsModal.showModal();
    gameModeBtns.forEach((btn) => {
       btn.addEventListener('change', (event) => {
          const mode = event.target.value;
          if (mode === 'PvP') {
             gameLevel.style.display = 'none';
-            player02input.style.display = 'block';
+            player02Div.style.display = 'block';
             document
                .getElementById('player02Name')
                .setAttribute('required', true);
          } else if (mode === 'PvE') {
             gameLevel.style.display = 'block';
-            player02input.style.display = 'none';
+            player02Div.style.display = 'none';
             document.getElementById('player02Name').removeAttribute('required');
          }
       });
@@ -253,7 +253,7 @@ const displayController = (function () {
          formData = {
             mode: gameMode,
             pl01Name: settingsForm.elements.player01Name.value,
-            pl02Name: `MINIMAX AI`,
+            pl02Name: `${aiDifficulty.toUpperCase()} AI`,
             pl01Symbol: getSymbol(pl01SymbolChoice),
             pl02Symbol: getSymbol(pl02SymbolChoice),
             pl01Header: 'PLAYER',
@@ -283,7 +283,7 @@ const displayController = (function () {
       lightCurrentSymbol(currentPlayer);
       resetBoard();
       settingsModal.close();
-      settingsForm.reset();
+      // settingsForm.reset();
    });
 
    const message = document.getElementById('message');
@@ -341,6 +341,7 @@ const displayController = (function () {
    settingsBtn.addEventListener('click', showSettings);
    function showSettings() {
       cancelSettings.style.display = 'block';
+
       settingsModal.showModal();
    }
 

@@ -552,6 +552,7 @@ button {
    color: var(--theme-lighter);
    cursor: pointer;
    transition: linear 0.3s;
+   outline: none;
 }
 
 button:hover {
