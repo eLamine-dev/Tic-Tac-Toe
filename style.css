@@ -151,6 +151,10 @@ body {
    border-radius: 10px;
 }
 
+.dimmed {
+   opacity: 0.5;
+}
+
 .cell.x,
 .cell.o {
    cursor: not-allowed;
@@ -477,13 +481,24 @@ body {
 }
 
 .bottom-buttons button,
-#save-settings {
+#form-footer button {
    height: 50px;
    min-width: 150px;
    display: flex;
    align-items: center;
    justify-content: center;
    gap: 10px;
+}
+
+#form-footer {
+   width: 90%;
+   display: flex;
+   justify-content: center;
+   gap: 20px;
+}
+
+#form-footer #cancel-settings {
+   display: none;
 }
 
 button {

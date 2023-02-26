@@ -283,17 +283,16 @@ const displayController = (function () {
 
       setBoardHoverClass(currentPlayer);
       lightCurrentSymbol(currentPlayer);
-
+      resetBoard();
       settingsModal.close();
       settingsForm.reset();
    });
 
+   const message = document.getElementById('message');
+   const boardCells = document.querySelectorAll('.board :not(#message)');
+
    pubsub.subscribe('gameEnded', endGame);
    function endGame([winner, winCombination]) {
-      const message = document.getElementById('message');
-      const boardBackground = document.querySelectorAll(
-         '.board :not(#message)'
-      );
       if (winner !== 'draw') {
          message.innerText = `${winner.name.toUpperCase()} Won!`;
          winCombination.forEach((index) => {
@@ -307,13 +306,49 @@ const displayController = (function () {
             }
          });
          board.removeEventListener('click', publishCellEvent);
+      } else {
+         message.style.backgroundColor = 'var(--theme-medium)';
+         message.innerText = 'Tie Game';
       }
 
       message.style.display = 'block';
-      boardBackground.forEach((elm) => {
-         elm.style.filter = 'opacity(0.5)';
+      boardCells.forEach((cell) => {
+         cell.classList.add('dimmed');
       });
    }
+
+   const resetBtn = document.getElementById('reset-btn');
+
+   resetBtn.addEventListener('click', resetBoard);
+
+   function resetBoard() {
+      message.style.display = 'none';
+      boardCells.forEach((cell) => {
+         cell.style.backgroundColor = 'var(--theme-dark)';
+         if (cell.classList.contains(O_SYMBOL)) cell.classList.toggle(O_SYMBOL);
+
+         if (cell.classList.contains(X_SYMBOL)) cell.classList.toggle(X_SYMBOL);
+      });
+
+      boardCells.forEach((cell) => {
+         cell.classList.remove('dimmed');
+      });
+      board.addEventListener('click', publishCellEvent);
+   }
+
+   const settingsBtn = document.getElementById('settings-btn');
+   const cancelSettings = document.getElementById('cancel-settings');
+
+   settingsBtn.addEventListener('click', showSettings);
+   function showSettings() {
+      cancelSettings.style.display = 'block';
+      settingsModal.showModal();
+   }
+
+   cancelSettings.addEventListener('click', (e) => {
+      e.preventDefault();
+      settingsModal.close();
+   });
 })();
 
 // ======================================================================
