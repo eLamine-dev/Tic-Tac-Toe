@@ -54,7 +54,7 @@ const pubsub = (() => {
 })();
 
 // player factory ======================================================================
-const createPlayer = (name, symbol) => ({ name, symbol });
+const createPlayer = (name, symbol, type) => ({ name, symbol, type });
 // game logic  ======================================================================
 
 let gameEngin = (function () {
@@ -73,30 +73,45 @@ let gameEngin = (function () {
    let player02;
    let players;
    let currentPlayer;
+   let gameMode;
 
-   pubsub.subscribe('stateUpdated', checkForEnd);
    pubsub.subscribe('newSettings', setupNewGame);
 
    function setupNewGame(formData) {
-      player01 = createPlayer(formData.pl01Name, formData.pl01Symbol);
-      player02 = createPlayer(formData.pl02Name, formData.pl02Symbol);
+      player01 = createPlayer(
+         formData.pl01Name,
+         formData.pl01Symbol,
+         formData.pl01Header
+      );
+      player02 = createPlayer(
+         formData.pl02Name,
+         formData.pl02Symbol,
+         formData.pl02Header
+      );
       players = [player01, player02];
       currentPlayer = players.find((player) => player.symbol === X_SYMBOL);
+      gameMode = formData.mode;
+      // if (currentPlayer === player02) playAiMove(new Array(9), player02);
    }
 
+   pubsub.subscribe('stateUpdated', checkForEnd);
    function checkForEnd([state, index]) {
-      const winCombination = findWinCombination(state, index);
-      if (winCombination) {
+      if (aWinExists(state)) {
+         const winCombination = getWinCombination(state, index);
          pubsub.publish('gameEnded', [currentPlayer, winCombination]);
       } else if (isDrawEnd(state)) {
          pubsub.publish('gameEnded', ['draw']);
       } else {
          alternateTurn();
-         if (getCurrentPlayer() === player02) {
-            let aiMove = minimax(state, index, player02);
-            pubsub.publish('cellClicked', aiMove);
-         }
+         if (currentPlayer === player02 && gameMode === 'PvE')
+            playAiMove(state, player02);
       }
+   }
+
+   pubsub.subscribe('stateReset', aiPlaysFirst);
+
+   function aiPlaysFirst(state) {
+      if (currentPlayer === player02) playAiMove(state, player02);
    }
 
    function alternateTurn() {
@@ -107,7 +122,13 @@ let gameEngin = (function () {
       return currentPlayer;
    }
 
-   function findWinCombination(state, index) {
+   function aWinExists(state) {
+      return WINNING_COMBINATIONS.some((combination) =>
+         combination.every((i) => state[i] === currentPlayer.symbol)
+      );
+   }
+
+   function getWinCombination(state, index) {
       const possibleWins = WINNING_COMBINATIONS.filter((combination) =>
          combination.includes(Number(index))
       );
@@ -117,28 +138,25 @@ let gameEngin = (function () {
    }
 
    function isDrawEnd(state) {
-      // return Object.values(state).length === state.length;
       return !state.includes(undefined);
    }
 
-   function minimax(state, index, player) {
-      // let state = [...state];
-      const winCombination = findWinCombination(state, index);
+   function minimax(state, player) {
+      const testingState = [...state];
 
       let bestMove;
       let bestScore;
 
-      if (winCombination && state[index] === player02.symbol) return 10;
-      if (winCombination && state[index] === player01.symbol) return -10;
-      if (isDrawEnd(state)) return 0;
+      if (aWinExists(testingState) && player === player01) return 10;
+      if (aWinExists(testingState) && player === player02) return -10;
+      if (isDrawEnd(testingState)) return 0;
 
       if (player === player02) {
          bestScore = -Infinity;
          for (let i = 0; i < state.length; i++) {
-            if (!state[i]) {
-               state[i] = player02.symbol;
-               let score = minimax(state, i, player01);
-               state[i] = undefined;
+            if (!testingState[i]) {
+               testingState[i] = player02.symbol;
+               let score = minimax(testingState, player01);
                if (score > bestScore) {
                   bestScore = score;
                   bestMove = i;
@@ -148,10 +166,9 @@ let gameEngin = (function () {
       } else {
          bestScore = Infinity;
          for (let i = 0; i < state.length; i++) {
-            if (!state[i]) {
-               state[i] = player01.symbol;
-               let score = minimax(state, i, player02);
-               state[i] = undefined;
+            if (!testingState[i]) {
+               testingState[i] = player01.symbol;
+               let score = minimax(testingState, player02);
                if (score < bestScore) {
                   bestScore = score;
                   bestMove = i;
@@ -160,6 +177,11 @@ let gameEngin = (function () {
          }
       }
       return bestMove;
+   }
+
+   function playAiMove(state, player) {
+      const aiMove = minimax(state, player);
+      pubsub.publish('aiPlayed', aiMove);
    }
 
    return { getCurrentPlayer };
@@ -171,7 +193,10 @@ const GameBoard = (function () {
    let state = new Array(9);
 
    pubsub.subscribe('cellClicked', updateBoardState);
+
    pubsub.subscribe('reset', resetState);
+
+   pubsub.subscribe('aiPlayed', updateBoardState);
 
    function updateBoardState(index) {
       const currentPlayer = gameEngin.getCurrentPlayer();
@@ -184,6 +209,7 @@ const GameBoard = (function () {
 
    function resetState() {
       state = new Array(9);
+      pubsub.publish('stateReset', state);
    }
 })();
 
@@ -191,13 +217,32 @@ const GameBoard = (function () {
 
 const displayController = (function () {
    const board = document.getElementById('board');
+   const settingsForm = document.getElementById('settings-form');
+   const pl01InfoHeader = document.getElementById('pl01-info-header');
+   const pl01InfoName = document.getElementById('pl01-info-name');
+   const pl02InfoHeader = document.getElementById('pl02-info-header');
+   const pl02InfoName = document.getElementById('pl02-info-name');
+   const pl01InfoSymbol = document.getElementById('pl01-info-symbol');
+   const pl02InfoSymbol = document.getElementById('pl02-info-symbol');
+   const pl01SymbolChoice = document.getElementById('pl01-symbol-choice');
+   const pl02SymbolChoice = document.getElementById('pl02-symbol-choice');
+   const flipSymbolsBtn = document.getElementById('flip-symbols-btn');
+   const message = document.getElementById('message');
+   const boardCells = document.querySelectorAll('.board :not(#message)');
+   const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
+   const gameLevel = document.getElementById('game-level');
+   const player02Div = document.getElementById('player-two');
+   const settingsModal = document.getElementById('settings-modal');
+   const resetBtn = document.getElementById('reset-btn');
+   const settingsBtn = document.getElementById('settings-btn');
+   const cancelSettings = document.getElementById('cancel-settings');
 
-   pubsub.subscribe('stateUpdated', updateCell);
+   pubsub.subscribe('stateUpdated', updateCells);
 
-   function updateCell([state, index]) {
+   function updateCells([state, index]) {
       const cell = document.querySelector(`[data-index="${index}"]`);
-      const currentPlayer = gameEngin.getCurrentPlayer();
       cell.classList.add(state[index]);
+      const currentPlayer = gameEngin.getCurrentPlayer();
       setBoardHoverClass(currentPlayer);
       lightCurrentSymbol(currentPlayer);
    }
@@ -205,9 +250,10 @@ const displayController = (function () {
    board.addEventListener('click', publishCellEvent);
 
    function publishCellEvent(event) {
-      if (!event.target.classList.contains('cell')) return;
-      const cellIndex = event.target.dataset.index;
-      pubsub.publish('cellClicked', cellIndex);
+      if (event.target.classList.contains('cell')) {
+         const cellIndex = event.target.dataset.index;
+         pubsub.publish('cellClicked', cellIndex);
+      }
    }
 
    function setBoardHoverClass(player) {
@@ -228,14 +274,10 @@ const displayController = (function () {
       });
    }
 
-   const settingsModal = document.getElementById('settings-modal');
    settingsModal.addEventListener('cancel', (event) => {
       event.preventDefault();
    });
 
-   const gameModeBtns = document.querySelectorAll('input[name="game-mode"]');
-   const gameLevel = document.getElementById('game-level');
-   const player02Div = document.getElementById('player-two');
    settingsModal.showModal();
    gameModeBtns.forEach((btn) => {
       btn.addEventListener('change', (event) => {
@@ -253,17 +295,6 @@ const displayController = (function () {
          }
       });
    });
-
-   const settingsForm = document.getElementById('settings-form');
-   const pl01InfoHeader = document.getElementById('pl01-info-header');
-   const pl01InfoName = document.getElementById('pl01-info-name');
-   const pl02InfoHeader = document.getElementById('pl02-info-header');
-   const pl02InfoName = document.getElementById('pl02-info-name');
-   const pl01InfoSymbol = document.getElementById('pl01-info-symbol');
-   const pl02InfoSymbol = document.getElementById('pl02-info-symbol');
-   const pl01SymbolChoice = document.getElementById('pl01-symbol-choice');
-   const pl02SymbolChoice = document.getElementById('pl02-symbol-choice');
-   const flipSymbolsBtn = document.getElementById('flip-symbols-btn');
 
    flipSymbolsBtn.addEventListener('click', flipSymbols);
    function flipSymbols(e) {
@@ -314,6 +345,7 @@ const displayController = (function () {
 
    settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      resetBoard();
       let formData = getGameSettings();
       [pl01InfoSymbol, pl02InfoSymbol].forEach((symbol) => {
          symbol.classList.remove(X_SYMBOL);
@@ -328,16 +360,13 @@ const displayController = (function () {
       pl02InfoSymbol.classList.add(formData.pl02Symbol);
 
       pubsub.publish('newSettings', formData);
-      let currentPlayer = gameEngin.getCurrentPlayer();
 
+      let currentPlayer = gameEngin.getCurrentPlayer();
       setBoardHoverClass(currentPlayer);
       lightCurrentSymbol(currentPlayer);
-      resetBoard();
+
       settingsModal.close();
    });
-
-   const message = document.getElementById('message');
-   const boardCells = document.querySelectorAll('.board :not(#message)');
 
    pubsub.subscribe('gameEnded', endGame);
 
@@ -366,8 +395,6 @@ const displayController = (function () {
       });
    }
 
-   const resetBtn = document.getElementById('reset-btn');
-
    resetBtn.addEventListener('click', resetBoard);
 
    function resetBoard() {
@@ -385,9 +412,6 @@ const displayController = (function () {
       board.addEventListener('click', publishCellEvent);
    }
 
-   const settingsBtn = document.getElementById('settings-btn');
-   const cancelSettings = document.getElementById('cancel-settings');
-
    settingsBtn.addEventListener('click', showSettings);
    function showSettings() {
       cancelSettings.style.display = 'block';
@@ -399,6 +423,4 @@ const displayController = (function () {
       e.preventDefault();
       settingsModal.close();
    });
-
-   function Minimax() {}
 })();
