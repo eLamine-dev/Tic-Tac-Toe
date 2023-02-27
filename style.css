@@ -160,8 +160,7 @@ body {
 }
 
 .light {
-   box-shadow: var(--theme-light) 0px 0px 2px 0px,
-      var(--theme-light) 0px 0px 8px 0px;
+   box-shadow: var(--theme-light) 0px 0px 8px 0px;
    filter: brightness(2);
 }
 

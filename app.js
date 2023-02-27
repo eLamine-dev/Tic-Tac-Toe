@@ -107,14 +107,36 @@ let gameEngin = (function () {
       const possibleWins = WINNING_COMBINATIONS.filter((combination) =>
          combination.includes(Number(index))
       );
-
       return possibleWins.find((combination) =>
          combination.every((i) => state[i] === currentPlayer.symbol)
       );
    }
 
    function isDrawEnd(state) {
-      return Object.values(state).length === state.length;
+      // return Object.values(state).length === state.length;
+      return !state.includes(undefined);
+   }
+
+   function minimax(state, index, maximizingPlayer) {
+      let testingState = [...state];
+      let availableMoves = getAvailableMoves(testingState);
+
+      if (findWinCombination(testingState, index)[0] === player02.symbol)
+         return 1;
+      if (findWinCombination(testingState, index)[0] === player01.symbol)
+         return -1;
+      if (isDrawEnd(testingState)) return 0;
+
+      let bestMove;
+      let bestScore;
+
+      function getAvailableMoves(testingState) {
+         let availableMoves = [];
+         for (let index = 0; index < testingState.length; index++) {
+            if (!testingState[index]) availableMoves.push[index];
+         }
+         return availableMoves;
+      }
    }
 
    return { getCurrentPlayer };
@@ -353,6 +375,6 @@ const displayController = (function () {
       e.preventDefault();
       settingsModal.close();
    });
-})();
 
-// Minimax Algorithm module ======================================================================
+   function Minimax() {}
+})();
