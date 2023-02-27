@@ -92,6 +92,10 @@ let gameEngin = (function () {
          pubsub.publish('gameEnded', ['draw']);
       } else {
          alternateTurn();
+         if (getCurrentPlayer() === player02) {
+            let aiMove = minimax(state, index, player02);
+            pubsub.publish('cellClicked', aiMove);
+         }
       }
    }
 
@@ -117,26 +121,45 @@ let gameEngin = (function () {
       return !state.includes(undefined);
    }
 
-   function minimax(state, index, maximizingPlayer) {
-      let testingState = [...state];
-      let availableMoves = getAvailableMoves(testingState);
-
-      if (findWinCombination(testingState, index)[0] === player02.symbol)
-         return 1;
-      if (findWinCombination(testingState, index)[0] === player01.symbol)
-         return -1;
-      if (isDrawEnd(testingState)) return 0;
+   function minimax(state, index, player) {
+      // let state = [...state];
+      const winCombination = findWinCombination(state, index);
 
       let bestMove;
       let bestScore;
 
-      function getAvailableMoves(testingState) {
-         let availableMoves = [];
-         for (let index = 0; index < testingState.length; index++) {
-            if (!testingState[index]) availableMoves.push[index];
+      if (winCombination && state[index] === player02.symbol) return 10;
+      if (winCombination && state[index] === player01.symbol) return -10;
+      if (isDrawEnd(state)) return 0;
+
+      if (player === player02) {
+         bestScore = -Infinity;
+         for (let i = 0; i < state.length; i++) {
+            if (!state[i]) {
+               state[i] = player02.symbol;
+               let score = minimax(state, i, player01);
+               state[i] = undefined;
+               if (score > bestScore) {
+                  bestScore = score;
+                  bestMove = i;
+               }
+            }
          }
-         return availableMoves;
+      } else {
+         bestScore = Infinity;
+         for (let i = 0; i < state.length; i++) {
+            if (!state[i]) {
+               state[i] = player01.symbol;
+               let score = minimax(state, i, player02);
+               state[i] = undefined;
+               if (score < bestScore) {
+                  bestScore = score;
+                  bestMove = i;
+               }
+            }
+         }
       }
+      return bestMove;
    }
 
    return { getCurrentPlayer };
@@ -155,6 +178,7 @@ const GameBoard = (function () {
       if (!state[index]) {
          state[index] = currentPlayer.symbol;
          pubsub.publish('stateUpdated', [state, index]);
+         console.log(state);
       }
    }
 
