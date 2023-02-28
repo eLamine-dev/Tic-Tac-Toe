@@ -261,12 +261,11 @@ const displayController = (function () {
 
    function updateCells([state, index]) {
       const currentPlayer = gameEngin.getCurrentPlayer();
-
       const cell = document.querySelector(`[data-index="${index}"]`);
       cell.classList.add(state[index]);
+      lightCurrentSymbol(currentPlayer);
       if (currentPlayer.type !== 'COMPUTER') {
          setBoardHoverClass(currentPlayer);
-         lightCurrentSymbol(currentPlayer);
       }
    }
 
