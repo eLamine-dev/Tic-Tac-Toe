@@ -82,12 +82,12 @@ let gameEngin = (function () {
       player01 = createPlayer(
          formData.pl01Name,
          formData.pl01Symbol,
-         formData.pl01Header
+         formData.pl01Type
       );
       player02 = createPlayer(
          formData.pl02Name,
          formData.pl02Symbol,
-         formData.pl02Header
+         formData.pl02Type
       );
       players = [player01, player02];
       currentPlayer = players.find((player) => player.symbol === X_SYMBOL);
@@ -194,8 +194,8 @@ let gameEngin = (function () {
       const maxDepth = setMaxDepth();
       function setMaxDepth() {
          if (aiDifficulty === 'easy') return 1;
-         if (aiDifficulty === 'medium') return 3;
-         if (aiDifficulty === 'hard') return 6;
+         if (aiDifficulty === 'medium') return 4;
+         if (aiDifficulty === 'hard') return 8;
       }
       const aiMove = minimax(state, player, 0, maxDepth);
       setTimeout(publishMove, 700);
@@ -341,8 +341,8 @@ const displayController = (function () {
             pl02Name: settingsForm.elements.player02Name.value,
             pl01Symbol: getSymbol(pl01SymbolChoice),
             pl02Symbol: getSymbol(pl02SymbolChoice),
-            pl01Header: 'PLAYER-01',
-            pl02Header: 'PLAYER-02',
+            pl01Type: 'PLAYER-01',
+            pl02Type: 'PLAYER-02',
          };
       } else if (gameMode === 'PvE') {
          const difficultyChoice = document.querySelector(
@@ -354,8 +354,8 @@ const displayController = (function () {
             pl02Name: `${difficultyChoice.toUpperCase()} AI`,
             pl01Symbol: getSymbol(pl01SymbolChoice),
             pl02Symbol: getSymbol(pl02SymbolChoice),
-            pl01Header: 'PLAYER',
-            pl02Header: 'COMPUTER',
+            pl01Type: 'PLAYER',
+            pl02Type: 'COMPUTER',
             difficultyChoice,
          };
       }
@@ -374,8 +374,8 @@ const displayController = (function () {
 
       pl01InfoName.innerText = formData.pl01Name.toUpperCase();
       pl02InfoName.innerText = formData.pl02Name.toUpperCase();
-      pl01InfoHeader.innerText = formData.pl01Header;
-      pl02InfoHeader.innerText = formData.pl02Header;
+      pl01InfoHeader.innerText = formData.pl01Type;
+      pl02InfoHeader.innerText = formData.pl02Type;
       pl01InfoSymbol.classList.add(formData.pl01Symbol);
       pl02InfoSymbol.classList.add(formData.pl02Symbol);
 
@@ -434,7 +434,6 @@ const displayController = (function () {
    settingsBtn.addEventListener('click', showSettings);
    function showSettings() {
       cancelSettings.style.display = 'block';
-
       settingsModal.showModal();
    }
 
