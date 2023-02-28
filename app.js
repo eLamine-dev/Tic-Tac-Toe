@@ -93,6 +93,7 @@ let gameEngin = (function () {
       currentPlayer = players.find((player) => player.symbol === X_SYMBOL);
       gameMode = formData.mode;
       aiDifficulty = formData.difficultyChoice;
+      console.log(aiDifficulty);
    }
 
    pubsub.subscribe('stateUpdated', checkForEnd);
@@ -178,7 +179,7 @@ let gameEngin = (function () {
          }
       }
 
-      if (depth === 0) {
+      if (depth === 0 || depth === maxDepth) {
          return bestMove;
       }
       return bestScore + (player === player02 ? depth : -depth);
@@ -189,12 +190,12 @@ let gameEngin = (function () {
       if (currentPlayer === player02) playAiMove(new Array(9), player02);
    }
 
-   function playAiMove(state, player, aiDifficulty) {
+   function playAiMove(state, player) {
       const maxDepth = setMaxDepth();
       function setMaxDepth() {
          if (aiDifficulty === 'easy') return 1;
-         if (aiDifficulty === 'medium') return 4;
-         if (aiDifficulty === 'hard') return 8;
+         if (aiDifficulty === 'medium') return 3;
+         if (aiDifficulty === 'hard') return 6;
       }
       const aiMove = minimax(state, player, 0, maxDepth);
       setTimeout(publishMove, 700);
