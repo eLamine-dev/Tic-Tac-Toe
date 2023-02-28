@@ -136,8 +136,6 @@ let gameEngin = (function () {
    }
 
    function minimax(state, player, depth) {
-      // const state = [...state];
-
       let bestMove;
       let bestScore;
 
@@ -161,7 +159,7 @@ let gameEngin = (function () {
                   bestScore = score;
                   bestMove = i;
                }
-               state[i] = undefined; // reset the state array
+               state[i] = undefined;
             }
          }
       } else {
@@ -174,7 +172,7 @@ let gameEngin = (function () {
                   bestScore = score;
                   bestMove = i;
                }
-               state[i] = undefined; // reset the state array
+               state[i] = undefined;
             }
          }
       }
@@ -192,8 +190,11 @@ let gameEngin = (function () {
 
    function playAiMove(state, player) {
       const aiMove = minimax(state, player, 0);
-      setTimeout(pubsub.publish('aiPlayed', aiMove), 500);
-      // pubsub.publish('aiPlayed', aiMove);
+      setTimeout(publishMove, 500);
+      function publishMove() {
+         pubsub.publish('aiMove', aiMove);
+      }
+      // pubsub.publish('aiMove', aiMove);
    }
 
    return { getCurrentPlayer };
@@ -208,7 +209,7 @@ const GameBoard = (function () {
 
    pubsub.subscribe('reset', resetState);
 
-   pubsub.subscribe('aiPlayed', updateBoardState);
+   pubsub.subscribe('aiMove', updateBoardState);
 
    function updateBoardState(index) {
       const currentPlayer = gameEngin.getCurrentPlayer();
