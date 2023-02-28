@@ -145,6 +145,19 @@ body {
    }
 }
 
+@keyframes placeMark {
+   0% {
+      transform: scale(0.5);
+   }
+   50% {
+      transform: scale(1.2);
+   }
+
+   100% {
+      transform: scale(1);
+   }
+}
+
 .player-info {
    display: grid;
    font-weight: 500;
@@ -201,6 +214,7 @@ body {
 .cell.x,
 .cell.o {
    cursor: not-allowed;
+   animation: placeMark 500ms;
 }
 
 .cell.x::before,

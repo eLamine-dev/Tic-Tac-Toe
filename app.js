@@ -201,7 +201,6 @@ let gameEngin = (function () {
       function publishMove() {
          pubsub.publish('aiMove', aiMove);
       }
-      // pubsub.publish('aiMove', aiMove);
    }
 
    return { getCurrentPlayer };
