@@ -74,6 +74,7 @@ let gameEngin = (function () {
    let players;
    let currentPlayer;
    let gameMode;
+   let aiDifficulty;
 
    pubsub.subscribe('newSettings', setupNewGame);
 
@@ -91,7 +92,7 @@ let gameEngin = (function () {
       players = [player01, player02];
       currentPlayer = players.find((player) => player.symbol === X_SYMBOL);
       gameMode = formData.mode;
-      // if (currentPlayer === player02) playAiMove(new Array(9), player02);
+      aiDifficulty = formData.difficultyChoice;
    }
 
    pubsub.subscribe('stateUpdated', checkForEnd);
@@ -135,7 +136,7 @@ let gameEngin = (function () {
       return !state.includes(undefined);
    }
 
-   function minimax(state, player, depth) {
+   function minimax(state, player, depth, maxDepth) {
       let bestMove;
       let bestScore;
 
@@ -145,7 +146,7 @@ let gameEngin = (function () {
       if (aWinExists(state, player01)) {
          return depth - 10;
       }
-      if (isDrawEnd(state)) {
+      if (isDrawEnd(state) || depth === maxDepth) {
          return 0;
       }
 
@@ -154,7 +155,7 @@ let gameEngin = (function () {
          for (let i = 0; i < state.length; i++) {
             if (state[i] === undefined) {
                state[i] = player.symbol;
-               let score = minimax(state, player01, depth + 1);
+               let score = minimax(state, player01, depth + 1, maxDepth);
                if (score > bestScore) {
                   bestScore = score;
                   bestMove = i;
@@ -167,7 +168,7 @@ let gameEngin = (function () {
          for (let i = 0; i < state.length; i++) {
             if (state[i] === undefined) {
                state[i] = player.symbol;
-               let score = minimax(state, player02, depth + 1);
+               let score = minimax(state, player02, depth + 1, maxDepth);
                if (score < bestScore) {
                   bestScore = score;
                   bestMove = i;
@@ -189,8 +190,14 @@ let gameEngin = (function () {
    }
 
    function playAiMove(state, player) {
-      const aiMove = minimax(state, player, 0);
-      setTimeout(publishMove, 500);
+      const maxDepth = getMaxDepth();
+      function getMaxDepth() {
+         if (aiDifficulty === 'easy') return 1;
+         if (aiDifficulty === 'medium') return 2;
+         if (aiDifficulty === 'hard') return 6;
+      }
+      const aiMove = minimax(state, player, 0, maxDepth);
+      setTimeout(publishMove, 700);
       function publishMove() {
          pubsub.publish('aiMove', aiMove);
       }
@@ -338,18 +345,18 @@ const displayController = (function () {
             pl02Header: 'PLAYER-02',
          };
       } else if (gameMode === 'PvE') {
-         const aiDifficulty = document.querySelector(
+         const difficultyChoice = document.querySelector(
             'input[name="game-level"]:checked'
          ).value;
          formData = {
             mode: gameMode,
             pl01Name: settingsForm.elements.player01Name.value,
-            pl02Name: `${aiDifficulty.toUpperCase()} AI`,
+            pl02Name: `${difficultyChoice.toUpperCase()} AI`,
             pl01Symbol: getSymbol(pl01SymbolChoice),
             pl02Symbol: getSymbol(pl02SymbolChoice),
             pl01Header: 'PLAYER',
             pl02Header: 'COMPUTER',
-            difficulty: aiDifficulty,
+            difficultyChoice,
          };
       }
 
