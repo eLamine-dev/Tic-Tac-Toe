@@ -260,20 +260,26 @@ const displayController = (function () {
    pubsub.subscribe('stateUpdated', updateCells);
 
    function updateCells([state, index]) {
+      const currentPlayer = gameEngin.getCurrentPlayer();
+
       const cell = document.querySelector(`[data-index="${index}"]`);
       cell.classList.add(state[index]);
-      const currentPlayer = gameEngin.getCurrentPlayer();
-      setBoardHoverClass(currentPlayer);
-      lightCurrentSymbol(currentPlayer);
+      if (currentPlayer.type !== 'COMPUTER') {
+         setBoardHoverClass(currentPlayer);
+         lightCurrentSymbol(currentPlayer);
+      }
    }
 
    board.addEventListener('click', publishCellEvent);
-
    function publishCellEvent(event) {
-      if (event.target.classList.contains('cell')) {
-         const cellIndex = event.target.dataset.index;
-         pubsub.publish('cellClicked', cellIndex);
-      }
+      if (
+         gameEngin.getCurrentPlayer().type === 'COMPUTER' ||
+         !event.target.classList.contains('cell')
+      )
+         return;
+
+      const cellIndex = event.target.dataset.index;
+      pubsub.publish('cellClicked', cellIndex);
    }
 
    function setBoardHoverClass(player) {
