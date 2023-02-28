@@ -96,7 +96,7 @@ let gameEngin = (function () {
 
    pubsub.subscribe('stateUpdated', checkForEnd);
    function checkForEnd([state, index]) {
-      if (aWinExists(state)) {
+      if (aWinExists(state, currentPlayer)) {
          const winCombination = getWinCombination(state, index);
          pubsub.publish('gameEnded', [currentPlayer, winCombination]);
       } else if (isDrawEnd(state)) {
@@ -108,12 +108,6 @@ let gameEngin = (function () {
       }
    }
 
-   pubsub.subscribe('stateReset', aiPlaysFirst);
-
-   function aiPlaysFirst(state) {
-      if (currentPlayer === player02) playAiMove(state, player02);
-   }
-
    function alternateTurn() {
       currentPlayer = players.find((player) => player !== currentPlayer);
    }
@@ -122,9 +116,9 @@ let gameEngin = (function () {
       return currentPlayer;
    }
 
-   function aWinExists(state) {
+   function aWinExists(state, player) {
       return WINNING_COMBINATIONS.some((combination) =>
-         combination.every((i) => state[i] === currentPlayer.symbol)
+         combination.every((i) => state[i] === player.symbol)
       );
    }
 
@@ -141,47 +135,65 @@ let gameEngin = (function () {
       return !state.includes(undefined);
    }
 
-   function minimax(state, player) {
-      const testingState = [...state];
+   function minimax(state, player, depth) {
+      // const state = [...state];
 
       let bestMove;
       let bestScore;
 
-      if (aWinExists(testingState) && player === player01) return 10;
-      if (aWinExists(testingState) && player === player02) return -10;
-      if (isDrawEnd(testingState)) return 0;
+      if (aWinExists(state, player02)) {
+         return 10 - depth;
+      }
+      if (aWinExists(state, player01)) {
+         return depth - 10;
+      }
+      if (isDrawEnd(state)) {
+         return 0;
+      }
 
       if (player === player02) {
          bestScore = -Infinity;
          for (let i = 0; i < state.length; i++) {
-            if (!testingState[i]) {
-               testingState[i] = player02.symbol;
-               let score = minimax(testingState, player01);
+            if (state[i] === undefined) {
+               state[i] = player.symbol;
+               let score = minimax(state, player01, depth + 1);
                if (score > bestScore) {
                   bestScore = score;
                   bestMove = i;
                }
+               state[i] = undefined; // reset the state array
             }
          }
       } else {
          bestScore = Infinity;
          for (let i = 0; i < state.length; i++) {
-            if (!testingState[i]) {
-               testingState[i] = player01.symbol;
-               let score = minimax(testingState, player02);
+            if (state[i] === undefined) {
+               state[i] = player.symbol;
+               let score = minimax(state, player02, depth + 1);
                if (score < bestScore) {
                   bestScore = score;
                   bestMove = i;
                }
+               state[i] = undefined; // reset the state array
             }
          }
       }
-      return bestMove;
+
+      if (depth === 0) {
+         return bestMove;
+      }
+      return bestScore + (player === player02 ? depth : -depth);
+   }
+
+   pubsub.subscribe('stateReset', playAiOnReset);
+   function playAiOnReset() {
+      if (currentPlayer === player02) playAiMove(new Array(9), player02);
    }
 
    function playAiMove(state, player) {
-      const aiMove = minimax(state, player);
-      pubsub.publish('aiPlayed', aiMove);
+      const aiMove = minimax(state, player, 0);
+      setTimeout(pubsub.publish('aiPlayed', aiMove), 500);
+      // pubsub.publish('aiPlayed', aiMove);
    }
 
    return { getCurrentPlayer };
@@ -209,7 +221,7 @@ const GameBoard = (function () {
 
    function resetState() {
       state = new Array(9);
-      pubsub.publish('stateReset', state);
+      pubsub.publish('stateReset');
    }
 })();
 
@@ -345,7 +357,7 @@ const displayController = (function () {
 
    settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      resetBoard();
+
       let formData = getGameSettings();
       [pl01InfoSymbol, pl02InfoSymbol].forEach((symbol) => {
          symbol.classList.remove(X_SYMBOL);
@@ -360,6 +372,7 @@ const displayController = (function () {
       pl02InfoSymbol.classList.add(formData.pl02Symbol);
 
       pubsub.publish('newSettings', formData);
+      resetBoard();
 
       let currentPlayer = gameEngin.getCurrentPlayer();
       setBoardHoverClass(currentPlayer);
@@ -398,18 +411,16 @@ const displayController = (function () {
    resetBtn.addEventListener('click', resetBoard);
 
    function resetBoard() {
-      pubsub.publish('reset');
       message.style.display = 'none';
       boardCells.forEach((cell) => {
          cell.style.backgroundColor = 'var(--theme-dark)';
+         cell.classList.remove('dimmed');
          if (cell.classList.contains(O_SYMBOL)) cell.classList.toggle(O_SYMBOL);
          if (cell.classList.contains(X_SYMBOL)) cell.classList.toggle(X_SYMBOL);
       });
 
-      boardCells.forEach((cell) => {
-         cell.classList.remove('dimmed');
-      });
       board.addEventListener('click', publishCellEvent);
+      pubsub.publish('reset');
    }
 
    settingsBtn.addEventListener('click', showSettings);
