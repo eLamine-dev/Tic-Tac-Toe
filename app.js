@@ -194,7 +194,7 @@ let gameEngin = (function () {
       const maxDepth = setMaxDepth();
       function setMaxDepth() {
          if (aiDifficulty === 'easy') return 1;
-         if (aiDifficulty === 'medium') return 4;
+         if (aiDifficulty === 'medium') return 3;
          if (aiDifficulty === 'hard') return 8;
       }
       const aiMove = minimax(state, player, 0, maxDepth);
