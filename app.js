@@ -179,7 +179,7 @@ let gameEngin = (function () {
          }
       }
 
-      if (depth === 0 || depth === maxDepth) {
+      if (depth === 0) {
          return bestMove;
       }
       return bestScore + (player === player02 ? depth : -depth);
