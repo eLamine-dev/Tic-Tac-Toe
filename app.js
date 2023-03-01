@@ -53,11 +53,16 @@ const pubsub = (() => {
    };
 })();
 
-// player factory ======================================================================
-const createPlayer = (name, symbol, type) => ({ name, symbol, type });
 // game logic  ======================================================================
 
 let gameEngin = (function () {
+   let player01;
+   let player02;
+   let players;
+   let currentPlayer;
+   let gameMode;
+   let aiDifficulty;
+   let gameLocked = false;
    const WINNING_COMBINATIONS = [
       [0, 1, 2],
       [3, 4, 5],
@@ -69,15 +74,11 @@ let gameEngin = (function () {
       [2, 4, 6],
    ];
 
-   let player01;
-   let player02;
-   let players;
-   let currentPlayer;
-   let gameMode;
-   let aiDifficulty;
+   // players factory function
+   const createPlayer = (name, symbol, type) => ({ name, symbol, type });
 
+   // setup new game settings when form submitted
    pubsub.subscribe('newSettings', setupNewGame);
-
    function setupNewGame(formData) {
       player01 = createPlayer(
          formData.pl01Name,
@@ -93,9 +94,15 @@ let gameEngin = (function () {
       currentPlayer = players.find((player) => player.symbol === X_SYMBOL);
       gameMode = formData.mode;
       aiDifficulty = formData.difficultyChoice;
-      console.log(aiDifficulty);
    }
 
+   // play ai when ai is the first to go
+   pubsub.subscribe('stateReset', playAiOnReset);
+   function playAiOnReset() {
+      if (currentPlayer === player02) playAiMove(new Array(9), player02);
+   }
+
+   // check the new published state for an end if not give the turn to the other player
    pubsub.subscribe('stateUpdated', checkForEnd);
    function checkForEnd([state, index]) {
       if (aWinExists(state, currentPlayer)) {
@@ -137,6 +144,7 @@ let gameEngin = (function () {
       return !state.includes(undefined);
    }
 
+   // minimax algorithm
    function minimax(state, player, depth, maxDepth) {
       let bestMove;
       let bestScore;
@@ -185,26 +193,28 @@ let gameEngin = (function () {
       return bestScore + (player === player02 ? depth : -depth);
    }
 
-   pubsub.subscribe('stateReset', playAiOnReset);
-   function playAiOnReset() {
-      if (currentPlayer === player02) playAiMove(new Array(9), player02);
-   }
-
    function playAiMove(state, player) {
+      gameLocked = true;
       const maxDepth = setMaxDepth();
+      const aiMove = minimax(state, player, 0, maxDepth);
+      setTimeout(publishMove, 700);
       function setMaxDepth() {
          if (aiDifficulty === 'easy') return 1;
          if (aiDifficulty === 'medium') return 3;
          if (aiDifficulty === 'hard') return 8;
       }
-      const aiMove = minimax(state, player, 0, maxDepth);
-      setTimeout(publishMove, 700);
+
       function publishMove() {
          pubsub.publish('aiMove', aiMove);
+         gameLocked = false;
       }
    }
 
-   return { getCurrentPlayer };
+   function waitForAi() {
+      return gameLocked;
+   }
+
+   return { getCurrentPlayer, waitForAi };
 })();
 
 // game board module ======================================================================
@@ -212,10 +222,8 @@ let gameEngin = (function () {
 const GameBoard = (function () {
    let state = new Array(9);
 
+   // update the board state from cell click or ai move
    pubsub.subscribe('cellClicked', updateBoardState);
-
-   pubsub.subscribe('reset', resetState);
-
    pubsub.subscribe('aiMove', updateBoardState);
 
    function updateBoardState(index) {
@@ -223,9 +231,11 @@ const GameBoard = (function () {
       if (!state[index]) {
          state[index] = currentPlayer.symbol;
          pubsub.publish('stateUpdated', [state, index]);
-         console.log(state);
       }
    }
+
+   // rest the state when reset is clicked
+   pubsub.subscribe('reset', resetState);
 
    function resetState() {
       state = new Array(9);
@@ -257,6 +267,7 @@ const displayController = (function () {
    const settingsBtn = document.getElementById('settings-btn');
    const cancelSettings = document.getElementById('cancel-settings');
 
+   // display updated cell symbol with passed state
    pubsub.subscribe('stateUpdated', updateCells);
 
    function updateCells([state, index]) {
@@ -269,6 +280,7 @@ const displayController = (function () {
       }
    }
 
+   // publish the index of the clicked cell
    board.addEventListener('click', publishCellEvent);
    function publishCellEvent(event) {
       if (
@@ -288,6 +300,7 @@ const displayController = (function () {
       board.classList.add(player.symbol);
    }
 
+   // highlight the symbol of the current player
    function lightCurrentSymbol(player) {
       const playersSymbols = document.querySelectorAll('.player-symbol');
       playersSymbols.forEach((symbol) => {
@@ -299,11 +312,7 @@ const displayController = (function () {
       });
    }
 
-   settingsModal.addEventListener('cancel', (event) => {
-      event.preventDefault();
-   });
-
-   settingsModal.showModal();
+   // toggle PvE and PvP on setting form
    gameModeBtns.forEach((btn) => {
       btn.addEventListener('change', (event) => {
          const mode = event.target.value;
@@ -321,6 +330,7 @@ const displayController = (function () {
       });
    });
 
+   // flip the symbols on settings form
    flipSymbolsBtn.addEventListener('click', flipSymbols);
    function flipSymbols(e) {
       e.preventDefault();
@@ -329,6 +339,8 @@ const displayController = (function () {
          symbol.classList.toggle(O_SYMBOL);
       });
    }
+
+   // get the submitted settings
    function getGameSettings() {
       const gameMode = document.querySelector(
          'input[name="game-mode"]:checked'
@@ -368,6 +380,7 @@ const displayController = (function () {
       return formData;
    }
 
+   // display players info on the game and publish the new settings
    settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -386,7 +399,6 @@ const displayController = (function () {
 
       pubsub.publish('newSettings', formData);
       resetBoard();
-
       let currentPlayer = gameEngin.getCurrentPlayer();
       setBoardHoverClass(currentPlayer);
       lightCurrentSymbol(currentPlayer);
@@ -394,6 +406,7 @@ const displayController = (function () {
       settingsModal.close();
    });
 
+   // visual effects when game reaches an end
    pubsub.subscribe('gameEnded', endGame);
 
    function endGame([winner, winCombination]) {
@@ -421,9 +434,10 @@ const displayController = (function () {
       });
    }
 
+   // reset the display and publish the reset event for other modules
    resetBtn.addEventListener('click', resetBoard);
-
    function resetBoard() {
+      if (gameEngin.waitForAi()) return;
       message.style.display = 'none';
       boardCells.forEach((cell) => {
          cell.style.backgroundColor = 'var(--theme-dark)';
@@ -436,8 +450,10 @@ const displayController = (function () {
       pubsub.publish('reset');
    }
 
+   // open and close settings
    settingsBtn.addEventListener('click', showSettings);
    function showSettings() {
+      if (gameEngin.waitForAi()) return;
       cancelSettings.style.display = 'block';
       settingsModal.showModal();
    }
@@ -445,5 +461,11 @@ const displayController = (function () {
    cancelSettings.addEventListener('click', (e) => {
       e.preventDefault();
       settingsModal.close();
+   });
+
+   // open modal at page load and prevent the user from closing the setting modal with ESC
+   settingsModal.showModal();
+   settingsModal.addEventListener('cancel', (event) => {
+      event.preventDefault();
    });
 })();
