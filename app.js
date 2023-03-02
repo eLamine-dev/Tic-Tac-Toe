@@ -196,12 +196,20 @@ let gameEngin = (function () {
    function playAiMove(state, player) {
       gameLocked = true;
       const maxDepth = setMaxDepth();
+      console.log(maxDepth);
       const aiMove = minimax(state, player, 0, maxDepth);
       setTimeout(publishMove, 700);
+
       function setMaxDepth() {
-         if (aiDifficulty === 'easy') return 1;
-         if (aiDifficulty === 'medium') return 3;
-         if (aiDifficulty === 'hard') return 8;
+         const easyDepthRange = [1, 2, 3, 4, 5];
+         const mediumDepthRange = [3, 4, 5, 6];
+         const hardDepthRange = [1, 6, 7, 8, 9]; // hard but sometimes does a wrong move
+         if (aiDifficulty === 'easy') return randomDepth(easyDepthRange);
+         if (aiDifficulty === 'medium') return randomDepth(mediumDepthRange);
+         if (aiDifficulty === 'hard') return randomDepth(hardDepthRange);
+         function randomDepth(depthRange) {
+            return depthRange[Math.floor(Math.random() * depthRange.length)];
+         }
       }
 
       function publishMove() {
