@@ -99,7 +99,7 @@ let gameEngin = (function () {
    // play ai when ai is the first to go
    pubsub.subscribe('stateReset', playAiOnReset);
    function playAiOnReset() {
-      if (currentPlayer === player02) playAiMove(new Array(9), player02);
+      if (currentPlayer.type === 'COMPUTER') playAiMove(new Array(9), player02);
    }
 
    // check the new published state for an end if not give the turn to the other player
@@ -196,7 +196,6 @@ let gameEngin = (function () {
    function playAiMove(state, player) {
       gameLocked = true;
       const maxDepth = setMaxDepth();
-      console.log(maxDepth);
       const aiMove = minimax(state, player, 0, maxDepth);
       setTimeout(publishMove, 700);
 
