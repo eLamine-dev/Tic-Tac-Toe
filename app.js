@@ -99,6 +99,7 @@ let gameEngin = (function () {
    // play ai when ai is the first to go
    pubsub.subscribe('stateReset', playAiOnReset);
    function playAiOnReset() {
+      currentPlayer = players.find((player) => player.symbol === X_SYMBOL);
       if (currentPlayer.type === 'COMPUTER') playAiMove(new Array(9), player02);
    }
 
@@ -455,6 +456,12 @@ const displayController = (function () {
 
       board.addEventListener('click', publishCellEvent);
       pubsub.publish('reset');
+      const currentPlayer = gameEngin.getCurrentPlayer();
+
+      lightCurrentSymbol(currentPlayer);
+      if (currentPlayer.type !== 'COMPUTER') {
+         setBoardHoverClass(currentPlayer);
+      }
    }
 
    // open and close settings
