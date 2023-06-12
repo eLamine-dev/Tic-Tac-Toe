@@ -203,7 +203,7 @@ let gameEngin = (function () {
       function setMaxDepth() {
          const easyDepthRange = [1, 2, 3, 4, 5];
          const mediumDepthRange = [3, 4, 5, 6];
-         const hardDepthRange = [1, 6, 7, 8, 9]; // hard but sometimes does a wrong move
+         const hardDepthRange = [6, 7, 8, 9]; // hard but sometimes does a wrong move
          if (aiDifficulty === 'easy') return randomDepth(easyDepthRange);
          if (aiDifficulty === 'medium') return randomDepth(mediumDepthRange);
          if (aiDifficulty === 'hard') return randomDepth(hardDepthRange);
